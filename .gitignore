@@ -1,0 +1,14 @@
+Tiketix/bin/
+Tiketix/obj/
+Contracts/bin/
+Contracts/obj/
+Entities/bin/
+Entities/obj/
+EventClients.Presentation/bin/
+EventClients.Presentation/obj/
+Repository/bin/
+Repository/obj/
+Service/bin/
+Service/obj/
+Service.Contracts/bin/
+Service.Contracts/obj/
