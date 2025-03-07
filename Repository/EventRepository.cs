@@ -14,6 +14,12 @@ namespace Repository
             .OrderBy(c => c.EventTitle)
             .ToList();
 
-    }
+
+        #pragma warning disable CS8603 // Possible null reference return.
+        public Event GetEventByTitle(string title, bool trackChanges) =>
+            FindByCondition(e => e.EventTitle == title, trackChanges)
+            .SingleOrDefault();
+
+    } 
 
 }

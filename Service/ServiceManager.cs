@@ -1,3 +1,4 @@
+using AutoMapper;
 using Contracts;
 using Service.Contracts;
 
@@ -7,12 +8,12 @@ namespace Service
     {
         private readonly Lazy<IClientService> _clientService;
         private readonly Lazy<IEventService> _eventService;
-        public ServiceManager(IRepositoryManager repositoryManager)
+        public ServiceManager(IRepositoryManager repositoryManager, IMapper mapper)
         {
             _clientService = new Lazy<IClientService>(() => new 
-            ClientService(repositoryManager));
+            ClientService(repositoryManager, mapper));
             _eventService = new Lazy<IEventService>(() => new
-            EventService(repositoryManager));
+            EventService(repositoryManager, mapper));
         }
         public IClientService ClientService => _clientService.Value;
         public IEventService EventService => _eventService.Value;

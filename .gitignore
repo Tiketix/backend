@@ -12,3 +12,5 @@ Service/bin/
 Service/obj/
 Service.Contracts/bin/
 Service.Contracts/obj/
+Shared/obj/
+Shared/bin/
