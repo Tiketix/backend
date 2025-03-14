@@ -1,4 +1,6 @@
-
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using tiketix.Extensions;
 
 
@@ -10,7 +12,13 @@ builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 
+builder.Services.AddAuthentication();
+builder.Services.ConfigureIdentity();
+
 builder.Services.AddAutoMapper(typeof(Program));
+
+builder.Services.ConfigureJWT(builder.Configuration);
+    
 
 
 builder.Services.AddControllers().AddApplicationPart(typeof(EventClients.Presentation.AssemblyReference).Assembly);

@@ -21,8 +21,12 @@ public class MappingProfile : Profile
         CreateMap<UpdateClientNameDto, Client>();
 
         CreateMap<UpdateClientContactDto, Client>();
-
+        
         CreateMap<UpdatePasswordDto, Client>();
+
+        CreateMap<AddEventDto, Event>();
+
+        CreateMap<RegistrationDto, User>();
 
 
     }
