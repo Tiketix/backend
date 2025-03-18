@@ -53,8 +53,10 @@ namespace tiketix.Extensions
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("Jwt");
-            var secretKey = Environment.GetEnvironmentVariable("SECRET");
-            
+                
+                #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+            string secretKey = Environment.GetEnvironmentVariable("Jwt_Key");
+
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

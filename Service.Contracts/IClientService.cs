@@ -10,6 +10,8 @@ public interface IClientService
 
     ClientDto GetClientByFirstName(string firstName, bool trackChanges);
 
+    ClientDto ClientLogin(string email, string password, bool trackChanges);
+
     ClientDto AddClient(AddClientDto client);
 
     void DeleteClient(string email, bool trackchanges);
@@ -19,5 +21,5 @@ public interface IClientService
     void UpdateClientContact(string email, UpdateClientContactDto updateClientContact, bool trackChanges);
 
     void UpdatePassword(string email, UpdatePasswordDto updatePassword, bool trackChanges);
-
+ 
 }

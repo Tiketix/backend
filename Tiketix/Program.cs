@@ -1,12 +1,13 @@
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using dotenv.net;
+
 using tiketix.Extensions;
 
 
+DotEnv.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureServiceManager();
@@ -18,6 +19,8 @@ builder.Services.ConfigureIdentity();
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.ConfigureJWT(builder.Configuration);
+
+DotEnv.Load();
     
 
 

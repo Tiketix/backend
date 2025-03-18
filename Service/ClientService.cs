@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using AutoMapper;
 using Contracts;
 using Entities.Models;
@@ -9,14 +8,18 @@ namespace Service;
 
 internal sealed class ClientService : IClientService
 {
-    private readonly IRepositoryManager _repository;
+    private readonly IRepositoryManager _repository; 
     private readonly IMapper _mapper;
+
     
-    public ClientService(IRepositoryManager repository, IMapper mapper)
+    public ClientService(IRepositoryManager repository, IMapper mapper) 
     {
         _repository = repository;
         _mapper = mapper;
+     
     }
+
+
 
      public IEnumerable<ClientDto> GetAllClients(bool trackChanges)
      {
@@ -61,6 +64,16 @@ internal sealed class ClientService : IClientService
                         
         return clientDto;
     }
+
+    public ClientDto ClientLogin(string email, string password, bool trackChanges)
+    {
+        var client = _repository.Client.ClientLogin(email, password, trackChanges);
+        
+        var clientDto = _mapper.Map<ClientDto>(client);
+
+        return clientDto;
+    }
+
 
     public ClientDto AddClient(AddClientDto client)
     {
@@ -117,7 +130,7 @@ internal sealed class ClientService : IClientService
         _repository.Save();
     }
 
-
+    
 
 }
 
