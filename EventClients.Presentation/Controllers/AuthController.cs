@@ -57,6 +57,45 @@ namespace EventClients.Presentation.Controllers
             return Ok(user.UserData);
         }
 
+
+        [HttpGet("get-all-users")]
+        [Authorize] // Optional: restrict access to admins only
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await _service.AuthService.GetAllUsers();
+            return Ok(users);
+        }
+
+        [HttpPut("change-email")]
+        
+        public async Task<IActionResult> UpdateEmail([FromBody] UpdateEmailDto updateEmailDto)
+        {
+            var result = await _service.AuthService.UpdateUserEmail(
+                updateEmailDto.CurrentEmail,
+                updateEmailDto.Password,
+                updateEmailDto.NewEmail);
+                
+            if (result.Succeeded)
+                return Ok("Email Updated Successfully");
+                
+            return BadRequest(result.Errors);
+        }
+
+        [HttpPut("change-password")]
+
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdateUserPasswordDto updateuserPasswordDto)
+        {
+            var result = await _service.AuthService.UpdateUserPassword(
+                updateuserPasswordDto.Email,
+                updateuserPasswordDto.CurrentPassword,
+                updateuserPasswordDto.NewPassword);
+                
+            if (result.Succeeded)
+                return Ok($"Password Changed Successfully. Your new password is {updateuserPasswordDto.NewPassword}");
+                
+            return BadRequest(result.Errors);
+        }
+
     }
 
     

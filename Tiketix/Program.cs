@@ -21,7 +21,6 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.ConfigureJWT(builder.Configuration);
 
 DotEnv.Load();
-    
 
 
 builder.Services.AddControllers().AddApplicationPart(typeof(EventClients.Presentation.AssemblyReference).Assembly);
