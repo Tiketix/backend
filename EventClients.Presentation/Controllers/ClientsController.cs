@@ -15,6 +15,7 @@ namespace EventClients.Presentation.Controllers
         
         
         [HttpGet]
+        [Authorize]
         public IActionResult GetClients()
         {
             try
@@ -95,7 +96,7 @@ namespace EventClients.Presentation.Controllers
                     {
                         return NotFound("Incorrect Credentials");
                     }
-                var response = new
+                var response = new 
                 {
                                    
                     User = new

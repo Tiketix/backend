@@ -5,6 +5,7 @@ using System.Text;
 using AutoMapper;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Service.Contracts;
@@ -18,6 +19,7 @@ namespace Service
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+
 
         private User? _user;
 
@@ -40,13 +42,74 @@ namespace Service
         }
 
 
-        public async Task<bool> ValidateUser(AuthDto authDto)
+        public async Task<(bool, LoginDto UserData)> ValidateUser(AuthDto authDto)
         {
             _user = await _userManager.FindByEmailAsync(authDto.Email);
+
             var result = _user != null && await _userManager.CheckPasswordAsync(_user, authDto.Password);
-                 
-            return result;
+            
+            if (!result)
+            {
+                throw new Exception("incorrect credentials!!");
+            }
+            LoginDto userData;
+            userData = _mapper.Map<LoginDto>(_user);
+
+            return (result, userData);
         }
+
+
+        public async Task<IEnumerable<User>> GetAllUsers()
+        {
+            return await _userManager.Users.ToListAsync();
+        }
+
+        public async Task<IdentityResult> UpdateUserEmail(string email, string password, string newEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+
+            var pass = await _userManager.CheckPasswordAsync(user, password);
+            
+            if (!pass)
+                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+            
+           
+                
+            user.Email = newEmail;
+            user.NormalizedEmail = _userManager.NormalizeEmail(newEmail);
+
+            
+            return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+            
+            // Verify the current password is correct
+            var checkPasswordResult = await _userManager.CheckPasswordAsync(user, currentPassword);
+            if (!checkPasswordResult)
+                return IdentityResult.Failed(new IdentityError { Description = "Current password is incorrect." });
+            
+            // Use the built-in ChangePasswordAsync method
+            return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        }
+
+
+
+   
+
+
+
+
+
+
+
         public async Task<string> CreateToken()
         {
             var signingCredentials = GetSigningCredentials();
@@ -93,12 +156,145 @@ namespace Service
     }
 }
 
-//add the jwt to your normal services.
 
-//add env
-//   "firstName": "Badboy",
-//   "lastName": "Tee",
-//   "username": "badboytee",
-//   "password": "badboytee123",
-//   "email": "badboyyyyyyyyyfjyjh",
-//   "phoneNumber": "0205946968768"
+
+
+// public async Task<IdentityResult> UpdateUserEmail(string email, string newEmail)
+// {
+//     var user = await _userManager.FindByEmailAsync(email);
+    
+//     if (user == null)
+//         return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+        
+//     user.Email = newEmail;
+//     user.NormalizedEmail = _userManager.NormalizeEmail(newEmail);
+//     user.EmailConfirmed = false; // Optional: set to false if you want the user to confirm the new email
+    
+//     return await _userManager.UpdateAsync(user);
+// }
+
+// public async Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword)
+// {
+//     var user = await _userManager.FindByEmailAsync(email);
+    
+//     if (user == null)
+//         return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+    
+//     // Verify the current password is correct
+//     var checkPasswordResult = await _userManager.CheckPasswordAsync(user, currentPassword);
+//     if (!checkPasswordResult)
+//         return IdentityResult.Failed(new IdentityError { Description = "Current password is incorrect." });
+    
+//     // Use the built-in ChangePasswordAsync method
+//     return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+// }
+// public async Task<IEnumerable<User>> GetAllUsers()
+// {
+//     return await _userManager.Users.ToListAsync();
+// }
+
+
+
+
+
+
+// [Route("api/[controller]")]
+// [ApiController]
+// public class AuthController : ControllerBase
+// {
+//     private readonly IAuthService _authService;
+
+//     public AuthController(IAuthService authService)
+//     {
+//         _authService = authService;
+//     }
+
+//     [HttpPost("register")]
+//     public async Task<IActionResult> RegisterUser([FromBody] RegistrationDto registrationDto)
+//     {
+//         var result = await _authService.RegisterUser(registrationDto);
+        
+//         if (result.Succeeded)
+//             return StatusCode(201);
+            
+//         return BadRequest(result.Errors);
+//     }
+
+//     [HttpGet("users")]
+//     [Authorize(Roles = "Admin")] // Optional: restrict access to admins only
+//     public async Task<IActionResult> GetAllUsers()
+//     {
+//         var users = await _authService.GetAllUsers();
+//         return Ok(users);
+//     }
+
+//     [HttpPut("email")]
+//     [Authorize]
+//     public async Task<IActionResult> UpdateEmail([FromBody] UpdateEmailDto updateEmailDto)
+//     {
+//         var result = await _authService.UpdateUserEmail(
+//             updateEmailDto.CurrentEmail,
+//             updateEmailDto.NewEmail);
+            
+//         if (result.Succeeded)
+//             return NoContent();
+            
+//         return BadRequest(result.Errors);
+//     }
+
+//     [HttpPut("password")]
+//     [Authorize]
+//     public async Task<IActionResult> UpdatePassword([FromBody] UpdatePasswordDto updatePasswordDto)
+//     {
+//         var result = await _authService.UpdateUserPassword(
+//             updatePasswordDto.Email,
+//             updatePasswordDto.CurrentPassword,
+//             updatePasswordDto.NewPassword);
+            
+//         if (result.Succeeded)
+//             return NoContent();
+            
+//         return BadRequest(result.Errors);
+//     }
+
+//     [HttpPost("login")]
+//     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+//     {
+//         var (signInResult, userData) = await _authService.LoginUser(loginDto);
+        
+//         if (signInResult.Succeeded)
+//             return Ok(userData);
+//         else if (signInResult.IsLockedOut)
+//             return StatusCode(423, "Account is locked out");
+//         else if (signInResult.IsNotAllowed)
+//             return Forbidden("Login not allowed");
+//         else
+//             return Unauthorized();
+//     }
+// }
+
+
+// public class UpdateEmailDto
+// {
+//     [Required]
+//     [EmailAddress]
+//     public string CurrentEmail { get; set; }
+    
+//     [Required]
+//     [EmailAddress]
+//     public string NewEmail { get; set; }
+// }
+
+// public class UpdatePasswordDto
+// {
+//     [Required]
+//     [EmailAddress]
+//     public string Email { get; set; }
+    
+//     [Required]
+//     public string CurrentPassword { get; set; }
+    
+//     [Required]
+//     [MinLength(8)]
+//     public string NewPassword { get; set; }
+// }

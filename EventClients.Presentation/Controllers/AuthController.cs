@@ -25,22 +25,38 @@ namespace EventClients.Presentation.Controllers
             }
             return BadRequest(ModelState);
         }
-        return StatusCode(201);
+        return Ok(result);
+        // return Ok("User Created successfully");
         }
 
-        [HttpPost("login")]
+        [HttpPost("admin-login")]
+
+        public async Task<IActionResult> ValidateAdmin([FromBody] AuthDto authDto)
+        {
+            var user = await _service.AuthService.ValidateUser(authDto);
+            // Console.WriteLine($"after validation {isUserValid}");
+            if (false)
+
+                throw new Exception("incorrect credentials!!");
+            
+            return Ok(new 
+            { Token = await _service.AuthService.CreateToken(),
+              user.UserData });
+        }
+
+        [HttpPost("user-login")]
 
         public async Task<IActionResult> ValidateUser([FromBody] AuthDto authDto)
         {
-            var isUserValid = await _service.AuthService.ValidateUser(authDto);
-            Console.WriteLine($"after validation {isUserValid}");
-            if (!isUserValid)
-                return Unauthorized();
+            var user = await _service.AuthService.ValidateUser(authDto);
+
+            if (false)
+
+                throw new Exception("");
             
-            return Ok(new { Token = await _service
-            .AuthService.CreateToken() });
+            return Ok(user.UserData);
         }
-        
+
     }
 
     

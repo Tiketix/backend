@@ -7,8 +7,16 @@ namespace Service.Contracts
     {
         Task<IdentityResult> RegisterUser(RegistrationDto registration);
 
-        Task<bool> ValidateUser(AuthDto authDto);
+        // Task<IEnumerable<User>> GetAllUsers();
+        // Task<IdentityResult> UpdateUserEmail(string email, string newEmail);
+        // Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword);
+
+        Task<(bool, LoginDto UserData)> ValidateUser(AuthDto authDto);
         Task<string> CreateToken();
     }
 }
+
+
+
+
 
