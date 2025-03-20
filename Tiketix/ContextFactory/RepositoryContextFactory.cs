@@ -8,16 +8,16 @@ namespace Tiketix.ContextFactory
     {
         public RepositoryContext CreateDbContext(string[] args)
         {
-            var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
+            // var configuration = new ConfigurationBuilder()
+            // .SetBasePath(Directory.GetCurrentDirectory())
+            // .AddJsonFile("appsettings.json")
+            // .Build();
 
             var builder = new DbContextOptionsBuilder<RepositoryContext>()
-            .UseSqlServer(configuration.GetConnectionString("DefaultConnection"), 
+            .UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection"), 
             b => b.MigrationsAssembly("Tiketix"));
 
             return new RepositoryContext(builder.Options);
-        }
+        } 
     }
 }

@@ -29,9 +29,9 @@ namespace tiketix.Extensions
         public static void ConfigureServiceManager(this IServiceCollection services) =>
                                 services.AddScoped<IServiceManager, ServiceManager>();
 
-        public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration) =>
+        public static void ConfigureSqlContext(this IServiceCollection services) =>
                                 services.AddDbContext<RepositoryContext>(opts =>
-                                opts.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                                opts.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")));
 
 
         public static void ConfigureIdentity(this IServiceCollection services)

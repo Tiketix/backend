@@ -10,10 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.ConfigureRepositoryManager();
+
 builder.Services.ConfigureServiceManager();
-builder.Services.ConfigureSqlContext(builder.Configuration);
+
+builder.Services.ConfigureSqlContext();
 
 builder.Services.AddAuthentication();
+
 builder.Services.ConfigureIdentity();
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -21,7 +24,6 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.ConfigureJWT(builder.Configuration);
 
 DotEnv.Load();
-
 
 builder.Services.AddControllers().AddApplicationPart(typeof(EventClients.Presentation.AssemblyReference).Assembly);
 

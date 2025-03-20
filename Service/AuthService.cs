@@ -125,7 +125,7 @@ namespace Service
         {
             var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("Jwt_Key"));
             var secret = new SymmetricSecurityKey(key);
-            return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+            return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256); 
         }
         private async Task<List<Claim>> GetClaims()
         {
