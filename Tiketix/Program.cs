@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using dotenv.net;
 using Microsoft.OpenApi.Models;
 using tiketix.Extensions;
@@ -22,6 +23,12 @@ builder.Services.ConfigureIdentity();
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.ConfigureJWT(builder.Configuration);
+
+builder.Services.AddMemoryCache();
+
+builder.Services.ConfigureRateLimitingOptions();
+
+builder.Services.AddHttpContextAccessor();
 
 DotEnv.Load();
 
@@ -80,6 +87,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseIpRateLimiting();
 
 app.UseCors("CorsPolicy");
 

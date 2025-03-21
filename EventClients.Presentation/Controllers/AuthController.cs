@@ -25,10 +25,10 @@ namespace EventClients.Presentation.Controllers
             }
             return BadRequest(ModelState);
         }
-        return Ok(result);
-        // return Ok("User Created successfully");
+        return Ok("User Created successfully");
         }
-
+        
+        
         [HttpPost("admin-login")]
 
         public async Task<IActionResult> ValidateAdmin([FromBody] AuthDto authDto)
@@ -44,7 +44,7 @@ namespace EventClients.Presentation.Controllers
               user.UserData });
         }
 
-        [HttpPost("user-login")]
+        [HttpPost("client-login")]
 
         public async Task<IActionResult> ValidateUser([FromBody] AuthDto authDto)
         {
@@ -59,7 +59,7 @@ namespace EventClients.Presentation.Controllers
 
 
         [HttpGet("get-all-users")]
-        [Authorize] // Optional: restrict access to admins only
+        [Authorize(Roles ="Manager, Administrator")] // restrict access to admins only
         public async Task<IActionResult> GetAllUsers()
         {
             var users = await _service.AuthService.GetAllUsers();
@@ -67,8 +67,7 @@ namespace EventClients.Presentation.Controllers
         }
 
         [HttpPut("change-email")]
-        
-        public async Task<IActionResult> UpdateEmail([FromBody] UpdateEmailDto updateEmailDto)
+        public async Task<IActionResult> UpdateUserEmail([FromBody] UpdateEmailDto updateEmailDto)
         {
             var result = await _service.AuthService.UpdateUserEmail(
                 updateEmailDto.CurrentEmail,
@@ -81,8 +80,21 @@ namespace EventClients.Presentation.Controllers
             return BadRequest(result.Errors);
         }
 
-        [HttpPut("change-password")]
+        [HttpPut("change-phone-number")]
+        public async Task<IActionResult> UpdateUserPhone([FromBody] UpdatePhoneDto updatePhoneDto)
+        {
+            var result = await _service.AuthService.UpdateUserPhone(
+                updatePhoneDto.CurrentEmail,
+                updatePhoneDto.Password,
+                updatePhoneDto.PhoneNumber);
+                
+            if (result.Succeeded)
+                return Ok("Phone Number Updated Successfully");
+                
+            return BadRequest(result.Errors);
+        }
 
+        [HttpPut("change-password")]
         public async Task<IActionResult> UpdatePassword([FromBody] UpdateUserPasswordDto updateuserPasswordDto)
         {
             var result = await _service.AuthService.UpdateUserPassword(
@@ -94,6 +106,24 @@ namespace EventClients.Presentation.Controllers
                 return Ok($"Password Changed Successfully. Your new password is {updateuserPasswordDto.NewPassword}");
                 
             return BadRequest(result.Errors);
+        }
+
+        [HttpDelete("delete-user")]
+        public async Task<IActionResult> DeleteUser(string email, string password)
+        {
+            await _service.AuthService.DeleteUser(email, password);
+
+            return Ok("Account Deleted successfully");
+        }
+
+
+        [HttpDelete("admin-delete-user")]
+        [Authorize(Roles ="Manager, Administrator")]
+        public async Task<IActionResult> AdminDeleteUser(string email)
+        {
+            await _service.AuthService.AdminDeleteUser(email);
+
+            return Ok("Account Deleted successfully");
         }
 
     }

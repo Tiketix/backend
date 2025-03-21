@@ -20,7 +20,6 @@ internal sealed class ClientService : IClientService
     }
 
 
-
      public IEnumerable<ClientDto> GetAllClients(bool trackChanges)
      {
         try

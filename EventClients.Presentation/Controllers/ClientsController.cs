@@ -15,7 +15,7 @@ namespace EventClients.Presentation.Controllers
         
         
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles ="Manager, Administrator")]
         public IActionResult GetClients()
         {
             try
@@ -32,6 +32,7 @@ namespace EventClients.Presentation.Controllers
 
         [HttpGet]
         [Route("by-email")]
+        [Authorize(Roles ="Manager, Administrator")]
 
         public IActionResult GetClientByEmail(string email)
         {
@@ -53,6 +54,7 @@ namespace EventClients.Presentation.Controllers
 
         [HttpGet]
         [Route("by-firstname")]
+        [Authorize(Roles ="Manager, Administrator")]
 
         public IActionResult GetClientByFirstName(string firstName)
         {
@@ -162,6 +164,7 @@ namespace EventClients.Presentation.Controllers
 
         [HttpDelete]
         [Route("delete-user")]
+        [Authorize(Roles ="Manager, Administrator")]
 
         public IActionResult DeleteClient(string email)
         {
@@ -174,4 +177,3 @@ namespace EventClients.Presentation.Controllers
     }
 }
 
-//add validation to controllers. if else.

@@ -49,7 +49,7 @@ internal sealed class EventService : IEventService
         }
         catch (Exception)
         {
-            throw new Exception($"Error retrieving Events");
+            throw new Exception($"No Events takes place at {time}");
         }
     }
 

@@ -38,6 +38,9 @@ namespace Service
                 #pragma warning disable CS8604 // Possible null reference argument.
             var result = await _userManager.CreateAsync(user, registration.Password);
 
+            if (result.Succeeded)
+                await _userManager.AddToRolesAsync(user, registration.Roles);
+
             return result;
         }
 
@@ -47,7 +50,6 @@ namespace Service
             _user = await _userManager.FindByEmailAsync(authDto.Email);
 
             var result = _user != null && await _userManager.CheckPasswordAsync(_user, authDto.Password);
-            
             if (!result)
             {
                 throw new Exception("incorrect credentials!!");
@@ -72,12 +74,12 @@ namespace Service
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
 
             var pass = await _userManager.CheckPasswordAsync(user, password);
             
             if (!pass)
-                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
             
            
                 
@@ -88,12 +90,30 @@ namespace Service
             return await _userManager.UpdateAsync(user);
         }
 
+        public async Task<IdentityResult> UpdateUserPhone(string email, string password, string newPhoneNumber)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+
+            var pass = await _userManager.CheckPasswordAsync(user, password);
+            
+            if (!pass)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+            
+           
+                
+            user.PhoneNumber = newPhoneNumber;
+            
+            return await _userManager.UpdateAsync(user);
+        }
+
         public async Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword)
         {
             var user = await _userManager.FindByEmailAsync(email);
             
             if (user == null)
-                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
             
             // Verify the current password is correct
             var checkPasswordResult = await _userManager.CheckPasswordAsync(user, currentPassword);
@@ -104,10 +124,30 @@ namespace Service
             return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
         }
 
+        public async Task<IdentityResult> DeleteUser(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
 
+            var pass = await _userManager.CheckPasswordAsync(user, password);
+            
+            if (!pass)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+            
+            return await _userManager.DeleteAsync(user);
+           
+        }
 
-   
+        public async Task<IdentityResult> AdminDeleteUser(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
 
+            
+            return await _userManager.DeleteAsync(user);
+        }
 
 
 
@@ -134,10 +174,11 @@ namespace Service
             {
             new Claim(ClaimTypes.Email, _user.Email)
             };
-            var emails = await _userManager.GetEmailAsync(_user);
-            foreach (var e in emails)
+
+            var roles = await _userManager.GetRolesAsync(_user);
+            foreach (var role in roles)
             {
-            claims.Add(new Claim(ClaimTypes.Email, emails));
+            claims.Add(new Claim(ClaimTypes.Role, role));
             }
             return claims;
         }

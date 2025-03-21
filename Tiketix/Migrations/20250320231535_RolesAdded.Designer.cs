@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Repository;
 
@@ -11,9 +12,11 @@ using Repository;
 namespace Tiketix.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20250320231535_RolesAdded")]
+    partial class RolesAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,21 +253,15 @@ namespace Tiketix.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "9c25fab4-ed63-499c-9ed3-8c06ad410d01",
+                            Id = "d948dd3f-82be-4be2-914d-5c8824cd2bf2",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "5cc22af8-0044-4057-bc48-fea7369e0eec",
+                            Id = "77ed1443-ebb3-447a-b18a-bc5a14eb6613",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
-                        },
-                        new
-                        {
-                            Id = "443e81f9-4197-4f61-82cb-707393fafc0d",
-                            Name = "Client",
-                            NormalizedName = "CLIENT"
                         });
                 });
 
