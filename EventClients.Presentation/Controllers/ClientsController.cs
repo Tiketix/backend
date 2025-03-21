@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -14,6 +15,7 @@ namespace EventClients.Presentation.Controllers
         
         
         [HttpGet]
+        [Authorize(Roles ="Manager, Administrator")]
         public IActionResult GetClients()
         {
             try
@@ -30,8 +32,9 @@ namespace EventClients.Presentation.Controllers
 
         [HttpGet]
         [Route("by-email")]
+        [Authorize(Roles ="Manager, Administrator")]
 
-        public IActionResult GetClients(string email)
+        public IActionResult GetClientByEmail(string email)
         {
             try
             {
@@ -51,6 +54,7 @@ namespace EventClients.Presentation.Controllers
 
         [HttpGet]
         [Route("by-firstname")]
+        [Authorize(Roles ="Manager, Administrator")]
 
         public IActionResult GetClientByFirstName(string firstName)
         {
@@ -80,6 +84,41 @@ namespace EventClients.Presentation.Controllers
 
             return Ok(newClient);
         }
+
+        [HttpGet]
+        [Route("login")]
+        // [Authorize]
+
+        public IActionResult ClientLogin(string email, string password)
+        {
+            try
+            {
+                var client = _service.ClientService.ClientLogin(email, password, trackChanges: false);
+                if (client is null)
+                    {
+                        return NotFound("Incorrect Credentials");
+                    }
+                var response = new 
+                {
+                                   
+                    User = new
+                    {
+                        client.Id,
+                        client.FirstName,
+                        client.LastName,
+                        client.Phone,
+                        client.Email
+                    }
+                };
+
+                return Ok(response); //return insensitive deets.
+            }
+            catch
+            {
+                return StatusCode(500, "Something is wrong somewhere.");
+            }
+        }
+
 
         [HttpPut]
         [Route("update-name")]
@@ -119,12 +158,13 @@ namespace EventClients.Presentation.Controllers
 
             _service.ClientService.UpdatePassword(email, client, trackChanges: true);
 
-            return NoContent();
+            return Ok("Password Updated");
 
         }
 
         [HttpDelete]
         [Route("delete-user")]
+        [Authorize(Roles ="Manager, Administrator")]
 
         public IActionResult DeleteClient(string email)
         {
@@ -136,3 +176,4 @@ namespace EventClients.Presentation.Controllers
 
     }
 }
+

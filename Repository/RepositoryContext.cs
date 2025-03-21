@@ -1,12 +1,12 @@
-using System;
 using Entities.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Repository.Configuration;
 
 namespace Repository
 {
 
-    public class RepositoryContext : DbContext
+    public class RepositoryContext : IdentityDbContext<User>
     {
         public RepositoryContext(DbContextOptions<RepositoryContext> options) : base(options) 
             { 
@@ -14,8 +14,11 @@ namespace Repository
 
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
+                base.OnModelCreating(modelBuilder);
+                
                 modelBuilder.ApplyConfiguration(new ClientConfiguration());
                 modelBuilder.ApplyConfiguration(new EventConfiguration());
+                modelBuilder.ApplyConfiguration(new RoleConfiguration());
             }
             public DbSet<Client>? Clients { get; set; }
             public DbSet<Event>? Events { get; set; }

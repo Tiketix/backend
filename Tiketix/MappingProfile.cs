@@ -16,6 +16,10 @@ public class MappingProfile : Profile
                 .ForMember(c => c.OrganizerEmail,
                     opt => opt.MapFrom(c => c.OrganizerEmail));
 
+        CreateMap<User, LoginDto>()
+                .ForMember(c => c.Email,
+                    opt => opt.MapFrom(c => c.Email));
+
         CreateMap<AddClientDto, Client>();
 
         CreateMap<UpdateClientNameDto, Client>();
