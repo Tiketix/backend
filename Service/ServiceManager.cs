@@ -16,7 +16,7 @@ namespace Service
                                 UserManager<User> userManager, IConfiguration configuration)
         {
             _clientService = new Lazy<IClientService>(() => new 
-            ClientService(repositoryManager, mapper));
+            ClientService(userManager, mapper));
             _eventService = new Lazy<IEventService>(() => new
             EventService(repositoryManager, mapper));
             _authService = new Lazy<IAuthService>(() =>new 

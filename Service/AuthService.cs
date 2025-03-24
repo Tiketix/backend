@@ -5,6 +5,7 @@ using System.Text;
 using AutoMapper;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Service.Contracts;
@@ -18,6 +19,7 @@ namespace Service
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+
 
         private User? _user;
 
@@ -39,14 +41,109 @@ namespace Service
             return result;
         }
 
-
-        public async Task<bool> ValidateUser(AuthDto authDto)
+        public async Task<IdentityResult> RegisterAdmin(AdminRegistrationDto registration)
         {
-            _user = await _userManager.FindByEmailAsync(authDto.Email);
-            var result = _user != null && await _userManager.CheckPasswordAsync(_user, authDto.Password);
-                 
+            var user = _mapper.Map<User>(registration);
+
+            var result = await _userManager.AddToRolesAsync(user, registration.Roles);
+            if (!result.Succeeded)
+                throw new Exception("Role does not exist");
+
+            await _userManager.CreateAsync(user, registration.Password);
+            
             return result;
         }
+
+
+        public async Task<(bool, LoginDto UserData)> ValidateUser(AuthDto authDto)
+        {
+            _user = await _userManager.FindByEmailAsync(authDto.Email);
+
+            var result = _user != null && await _userManager.CheckPasswordAsync(_user, authDto.Password);
+            if (!result)
+            {
+                throw new Exception("incorrect credentials!!");
+            }
+            LoginDto userData;
+            userData = _mapper.Map<LoginDto>(_user);
+
+            return (result, userData);
+        }
+
+        public async Task<IdentityResult> UpdateUserEmail(string email, string password, string newEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+
+            var pass = await _userManager.CheckPasswordAsync(user, password);
+            
+            if (!pass)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+            
+           
+                
+            user.Email = newEmail;
+            user.NormalizedEmail = _userManager.NormalizeEmail(newEmail);
+
+            
+            return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<IdentityResult> UpdateUserPhone(string email, string password, string newPhoneNumber)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+
+            var pass = await _userManager.CheckPasswordAsync(user, password);
+            
+            if (!pass)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+            
+           
+                
+            user.PhoneNumber = newPhoneNumber;
+            
+            return await _userManager.UpdateAsync(user);
+        }
+
+        public async Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+            
+            // Verify the current password is correct
+            var checkPasswordResult = await _userManager.CheckPasswordAsync(user, currentPassword);
+            if (!checkPasswordResult)
+                return IdentityResult.Failed(new IdentityError { Description = "Current password is incorrect." });
+            
+            // Use the built-in ChangePasswordAsync method
+            return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        }
+
+        public async Task<IdentityResult> DeleteUser(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+
+            var pass = await _userManager.CheckPasswordAsync(user, password);
+            
+            if (!pass)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+            
+            return await _userManager.DeleteAsync(user);
+           
+        }
+
+
+
+
+
+
         public async Task<string> CreateToken()
         {
             var signingCredentials = GetSigningCredentials();
@@ -58,7 +155,7 @@ namespace Service
         {
             var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("Jwt_Key"));
             var secret = new SymmetricSecurityKey(key);
-            return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+            return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256); 
         }
         private async Task<List<Claim>> GetClaims()
         {
@@ -67,10 +164,11 @@ namespace Service
             {
             new Claim(ClaimTypes.Email, _user.Email)
             };
-            var emails = await _userManager.GetEmailAsync(_user);
-            foreach (var e in emails)
+
+            var roles = await _userManager.GetRolesAsync(_user);
+            foreach (var role in roles)
             {
-            claims.Add(new Claim(ClaimTypes.Email, emails));
+            claims.Add(new Claim(ClaimTypes.Role, role));
             }
             return claims;
         }
@@ -93,12 +191,4 @@ namespace Service
     }
 }
 
-//add the jwt to your normal services.
 
-//add env
-//   "firstName": "Badboy",
-//   "lastName": "Tee",
-//   "username": "badboytee",
-//   "password": "badboytee123",
-//   "email": "badboyyyyyyyyyfjyjh",
-//   "phoneNumber": "0205946968768"

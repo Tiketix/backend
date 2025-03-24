@@ -16,12 +16,14 @@ namespace Repository
             {
                 base.OnModelCreating(modelBuilder);
                 
-                modelBuilder.ApplyConfiguration(new ClientConfiguration());
                 modelBuilder.ApplyConfiguration(new EventConfiguration());
+<<<<<<< HEAD
                 base.OnModelCreating(modelBuilder);
             // Configure entity relationships and constraints here, if needed.
+=======
+                modelBuilder.ApplyConfiguration(new RoleConfiguration());
+>>>>>>> origin/tickets-api
             }
-            public DbSet<Client>? Clients { get; set; }
             public DbSet<Event>? Events { get; set; }
 
             public DbSet<Ticket> Tickets { get; set; }  // DbSet for tickets

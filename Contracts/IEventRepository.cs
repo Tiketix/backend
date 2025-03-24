@@ -11,6 +11,8 @@ namespace Contracts
         Event GetEventByTitle(string title, bool trackChanges);
 
         void AddEvent(Event newEvent);
+
+        void DeleteEvent(Event eventName);
     }
 }
 

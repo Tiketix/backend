@@ -1,25 +1,13 @@
+using Microsoft.AspNetCore.Identity;
 using Shared.DataTransferObjects;
 
 namespace Service.Contracts;
 
 public interface IClientService
 {
-    IEnumerable<ClientDto> GetAllClients(bool trackChanges);
+    Task<IEnumerable<LoginDto>> GetAllUsers();
+    Task<LoginDto> GetUserByEmail(string email);
+    Task<IdentityResult> AdminDeleteUser(string email);
 
-    ClientDto GetClientByEmail(string email, bool trackChanges);
-
-    ClientDto GetClientByFirstName(string firstName, bool trackChanges);
-
-    ClientDto ClientLogin(string email, string password, bool trackChanges);
-
-    ClientDto AddClient(AddClientDto client);
-
-    void DeleteClient(string email, bool trackchanges);
-
-    void UpdateClientName(string email, UpdateClientNameDto updateClientName, bool trackChanges);
-
-    void UpdateClientContact(string email, UpdateClientContactDto updateClientContact, bool trackChanges);
-
-    void UpdatePassword(string email, UpdatePasswordDto updatePassword, bool trackChanges);
- 
+   
 }

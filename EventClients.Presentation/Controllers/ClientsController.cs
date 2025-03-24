@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
-using Shared.DataTransferObjects;
 
 
 namespace EventClients.Presentation.Controllers
 {
 [Route("api/clients")]
 [ApiController]
+[Authorize(Roles ="Manager, Administrator")]
     public class ClientsController : ControllerBase
     {
         private readonly IServiceManager _service;
@@ -15,162 +15,49 @@ namespace EventClients.Presentation.Controllers
         
         
         [HttpGet]
-        public IActionResult GetClients()
+        [Route("all-users")]
+        public async Task<IActionResult> GetAllUsers() 
         {
             try
             {
-                var clients = 
-                _service.ClientService.GetAllClients(trackChanges: false);
+                var clients = await _service.ClientService.GetAllUsers();
                 return Ok(clients);
             }
             catch
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Something Went Wrong");
             }
         }
 
         [HttpGet]
-        [Route("by-email")]
+        [Route("user-by-email")]
 
-        public IActionResult GetClientByEmail(string email)
+        public async Task<IActionResult> GetUserByEmail(string email)
         {
-            try
+            var user = await _service.ClientService.GetUserByEmail(email);
+
+            if (user is null)
             {
-                var client = _service.ClientService.GetClientByEmail(email, trackChanges: false);
-
-                if (client is null)
-                {
-                    return NotFound("Client does not exist!!");
-                }
-                return Ok(client);
+                return NotFound("User does not exist!!");
             }
-            catch
-            {
-                return StatusCode(500, "Something is wrong somewhere.");
-            }
+            return Ok(user);
+            
         }
 
-        [HttpGet]
-        [Route("by-firstname")]
-
-        public IActionResult GetClientByFirstName(string firstName)
+        [HttpDelete("admin-delete-user")]
+        public async Task<IActionResult> AdminDeleteUser(string email)
         {
-            try
-            {
-                var client = _service.ClientService.GetClientByFirstName(firstName, trackChanges: false);
-                if (client is null)
-                    {
-                        return NotFound("Client does not exist!!");
-                    }
-                    return Ok(client);
-            }
-            catch
-            {
-                return StatusCode(500, "Something is wrong somewhere.");
-            }
-        }
+            await _service.ClientService.AdminDeleteUser(email);
 
-        [HttpPost]
-        [Route("register")]
-        public IActionResult AddClient([FromBody] AddClientDto client)
-        {
-            if (client is null)
-                    return BadRequest("AddClientDto object is null");
-
-            var newClient = _service.ClientService.AddClient(client);
-
-            return Ok(newClient);
-        }
-
-        [HttpGet]
-        [Route("login")]
-        // [Authorize]
-
-        public IActionResult ClientLogin(string email, string password)
-        {
-            try
-            {
-                var client = _service.ClientService.ClientLogin(email, password, trackChanges: false);
-                if (client is null)
-                    {
-                        return NotFound("Incorrect Credentials");
-                    }
-                var response = new
-                {
-                                   
-                    User = new
-                    {
-                        client.Id,
-                        client.FirstName,
-                        client.LastName,
-                        client.Phone,
-                        client.Email
-                    }
-                };
-
-                return Ok(response); //return insensitive deets.
-            }
-            catch
-            {
-                return StatusCode(500, "Something is wrong somewhere.");
-            }
+            return Ok("Account Deleted successfully");
         }
 
 
-        [HttpPut]
-        [Route("update-name")]
 
-        public IActionResult UpdateClientName(string email, [FromBody] UpdateClientNameDto client)
-        {
-            if (client is null)
-                    return BadRequest("UpdateClientNameDto object is null");
 
-            _service.ClientService.UpdateClientName(email, client, trackChanges: true);
 
-            return Ok(client);
-
-        }
-
-        [HttpPut]
-        [Route("update-contact")]
-
-        public IActionResult UpdateClientContact(string email, [FromBody] UpdateClientContactDto client)
-        {
-            if (client is null)
-                    return BadRequest("UpdateClientContactDto object is null");
-
-            _service.ClientService.UpdateClientContact(email, client, trackChanges: true);
-
-            return Ok(client);
-
-        }
-
-        [HttpPut]
-        [Route("change-password")]
-
-        public IActionResult UpdatePassword(string email, [FromBody] UpdatePasswordDto client)
-        {
-            if (client is null)
-                    return BadRequest("UpdatePasswordDto object is null");
-
-            _service.ClientService.UpdatePassword(email, client, trackChanges: true);
-
-            return Ok("Password Updated");
-
-        }
-
-        [HttpDelete]
-        [Route("delete-user")]
-
-        public IActionResult DeleteClient(string email)
-        {
-            _service.ClientService.DeleteClient(email, trackchanges: false);
-
-            return Ok("Deleted successfully");
-        }
-
+        
 
     }
 }
 
-//add validation to controllers. if else.
