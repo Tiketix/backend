@@ -1,4 +1,3 @@
-using AspNetCoreRateLimit;
 using dotenv.net;
 using tiketix.Extensions;
 using Microsoft.OpenApi.Models;
@@ -10,13 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.ConfigureRepositoryManager();
-
 builder.Services.ConfigureServiceManager();
-
-builder.Services.ConfigureSqlContext();
+builder.Services.ConfigureSqlContext(builder.Configuration);
 
 builder.Services.AddAuthentication();
-
 builder.Services.ConfigureIdentity();
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -24,6 +20,8 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.ConfigureJWT(builder.Configuration);
 
 DotEnv.Load();
+
+
 
 builder.Services.AddCors(options =>
 {
@@ -101,8 +99,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
-app.UseIpRateLimiting();
 
 app.UseCors("CorsPolicy");
 
