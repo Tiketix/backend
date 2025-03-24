@@ -19,11 +19,6 @@ namespace Repository.Configuration
                 {
                 Name = "Administrator",
                 NormalizedName = "ADMINISTRATOR"
-                },
-                new IdentityRole
-                {
-                Name = "Client",
-                NormalizedName = "CLIENT"
                 }
             );
         }

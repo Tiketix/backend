@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -13,7 +12,7 @@ namespace EventClients.Presentation.Controllers
         public AuthController(IServiceManager service) => _service = service;
         
 
-        [HttpPost("register")]
+        [HttpPost("register-user")]
         public async Task<IActionResult> RegisterUser([FromBody] RegistrationDto registration)
         {
         var result = await _service.AuthService.RegisterUser(registration);
@@ -26,6 +25,21 @@ namespace EventClients.Presentation.Controllers
             return BadRequest(ModelState);
         }
         return Ok("User Created successfully");
+        }
+
+        [HttpPost("register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] AdminRegistrationDto registration)
+        {
+        var result = await _service.AuthService.RegisterAdmin(registration);
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+            ModelState.TryAddModelError(error.Code, error.Description);
+            }
+            return BadRequest(ModelState);
+        }
+        return Ok("Admin-User Created successfully");
         }
         
         
@@ -44,7 +58,7 @@ namespace EventClients.Presentation.Controllers
               user.UserData });
         }
 
-        [HttpPost("client-login")]
+        [HttpPost("user-login")]
 
         public async Task<IActionResult> ValidateUser([FromBody] AuthDto authDto)
         {
@@ -55,15 +69,6 @@ namespace EventClients.Presentation.Controllers
                 throw new Exception("");
             
             return Ok(user.UserData);
-        }
-
-
-        [HttpGet("get-all-users")]
-        [Authorize(Roles ="Manager, Administrator")] // restrict access to admins only
-        public async Task<IActionResult> GetAllUsers()
-        {
-            var users = await _service.AuthService.GetAllUsers();
-            return Ok(users);
         }
 
         [HttpPut("change-email")]
@@ -116,15 +121,6 @@ namespace EventClients.Presentation.Controllers
             return Ok("Account Deleted successfully");
         }
 
-
-        [HttpDelete("admin-delete-user")]
-        [Authorize(Roles ="Manager, Administrator")]
-        public async Task<IActionResult> AdminDeleteUser(string email)
-        {
-            await _service.AuthService.AdminDeleteUser(email);
-
-            return Ok("Account Deleted successfully");
-        }
 
     }
 

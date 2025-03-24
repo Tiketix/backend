@@ -3,11 +3,11 @@ using Shared.DataTransferObjects;
 
 namespace Service.Contracts
 {
-    public interface IAuthService
+    public interface IAuthService 
     {
         Task<IdentityResult> RegisterUser(RegistrationDto registration);
 
-        Task<IEnumerable<LoginDto>> GetAllUsers();
+        Task<IdentityResult> RegisterAdmin(AdminRegistrationDto registration);
 
         Task<IdentityResult> UpdateUserEmail(string email, string password, string newEmail);
 
@@ -16,8 +16,6 @@ namespace Service.Contracts
         Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword);
 
         Task<IdentityResult> DeleteUser(string email, string password);
-
-        Task<IdentityResult> AdminDeleteUser(string email);
 
         Task<(bool, LoginDto UserData)> ValidateUser(AuthDto authDto);
 

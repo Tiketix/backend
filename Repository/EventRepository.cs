@@ -27,6 +27,8 @@ namespace Repository
 
         public void AddEvent(Event newEvent) => Create(newEvent);
 
+        public void DeleteEvent(Event eventName) => Delete(eventName);
+
     } 
 
 }

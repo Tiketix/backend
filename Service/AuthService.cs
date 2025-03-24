@@ -38,9 +38,19 @@ namespace Service
                 #pragma warning disable CS8604 // Possible null reference argument.
             var result = await _userManager.CreateAsync(user, registration.Password);
 
-            if (result.Succeeded)
-                await _userManager.AddToRolesAsync(user, registration.Roles);
+            return result;
+        }
 
+        public async Task<IdentityResult> RegisterAdmin(AdminRegistrationDto registration)
+        {
+            var user = _mapper.Map<User>(registration);
+
+            var result = await _userManager.AddToRolesAsync(user, registration.Roles);
+            if (!result.Succeeded)
+                throw new Exception("Role does not exist");
+
+            await _userManager.CreateAsync(user, registration.Password);
+            
             return result;
         }
 
@@ -58,16 +68,6 @@ namespace Service
             userData = _mapper.Map<LoginDto>(_user);
 
             return (result, userData);
-        }
-
-
-        public async Task<IEnumerable<LoginDto>> GetAllUsers()
-        {
-            var users = await _userManager.Users.ToListAsync();
-
-            var usersDto = _mapper.Map<IEnumerable<LoginDto>>(users);
-
-            return usersDto;
         }
 
         public async Task<IdentityResult> UpdateUserEmail(string email, string password, string newEmail)
@@ -137,16 +137,6 @@ namespace Service
             
             return await _userManager.DeleteAsync(user);
            
-        }
-
-        public async Task<IdentityResult> AdminDeleteUser(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
-
-            
-            return await _userManager.DeleteAsync(user);
         }
 
 

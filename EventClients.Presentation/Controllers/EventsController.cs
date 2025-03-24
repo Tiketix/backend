@@ -78,6 +78,29 @@ namespace EventClients.Presentation.Controllers
             return Ok(addNewEvent);
         }
 
+        [HttpPut]
+        [Route("update-event-details")]
+
+        public IActionResult UpdateEventDetails(string title, [FromBody] UpdateEventDetailsDto newEventDetails)
+        {
+            if (newEventDetails is null)
+                    return BadRequest("UpdateEventDetailsDto object is null");
+
+            _service.EventService.UpdateEventDetails(title, newEventDetails, trackChanges: true);
+
+            return Ok(newEventDetails);
+
+        }
+
+        [HttpDelete]
+        [Route("delete-event")]
+        public IActionResult DeleteEvent(string title)
+        {
+            _service.EventService.DeleteEvent(title, trackchanges: false);
+
+            return Ok("Event Deleted successfully");
+        }
+
 
     }
 }

@@ -53,7 +53,7 @@ internal sealed class EventService : IEventService
         }
     }
 
-    public EventDto GetEventByTitle(string title, bool trackChanges)
+    public EventDto GetEventByTitle(string title, bool trackChanges) 
     {
         try
         {
@@ -78,6 +78,22 @@ internal sealed class EventService : IEventService
 
         var returnEvent = _mapper.Map<EventDto>(addNewEvent);
         return returnEvent;
+    }
+
+    public void DeleteEvent(string title, bool trackchanges)
+    {
+        var eventName = _repository.Event.GetEventByTitle(title, trackchanges) ?? throw new Exception("event does not exist in database");
+
+        _repository.Event.DeleteEvent(eventName);
+        _repository.Save();
+    }
+
+    public void UpdateEventDetails(string title, UpdateEventDetailsDto updateEventDetails, bool trackchanges)
+    {
+        var eventName = _repository.Event.GetEventByTitle(title, trackchanges) ?? throw new Exception("event does not exist in database");
+        
+        _mapper.Map(updateEventDetails, eventName);
+        _repository.Save();
     }
 
 

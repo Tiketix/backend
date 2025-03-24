@@ -16,11 +16,9 @@ namespace Repository
             {
                 base.OnModelCreating(modelBuilder);
                 
-                modelBuilder.ApplyConfiguration(new ClientConfiguration());
                 modelBuilder.ApplyConfiguration(new EventConfiguration());
                 modelBuilder.ApplyConfiguration(new RoleConfiguration());
             }
-            public DbSet<Client>? Clients { get; set; }
             public DbSet<Event>? Events { get; set; }
 
     }
