@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Shared.DataTransferObjects;
 
 
 namespace EventClients.Presentation.Controllers
@@ -15,20 +16,36 @@ namespace EventClients.Presentation.Controllers
         [HttpGet]
         public IActionResult GetEvents()
         {
-        try
-        {
-            var events = 
-            _service.EventService.GetAllEvents(trackChanges: false);
-            return Ok(events);
-        }
-        catch
-        {
-            return StatusCode(500, "Internal server error");
-        }
+            try
+            {
+                var events = 
+                _service.EventService.GetAllEvents(trackChanges: false);
+                return Ok(events);
+            }
+            catch
+            {
+                return StatusCode(500, "Internal server error");
+            }
         }
 
         [HttpGet]
-        [Route("get-event-by-title")]
+        [Route("events-by-time")]
+        public IActionResult GetEventsByTime(string time)
+        {
+            try
+            {
+                var events = 
+                _service.EventService.GetEventsByTime(time, trackChanges: false);
+                return Ok(events);
+            }
+            catch
+            {
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        [HttpGet]
+        [Route("events-by-title")]
 
         public IActionResult GetEventByTitle(string title)
         {
@@ -47,5 +64,43 @@ namespace EventClients.Presentation.Controllers
                 return StatusCode(500, "Something is wrong somewhere.");
             }
         }
+
+        [HttpPost]
+        [Route("add-event")]
+
+        public IActionResult AddEvent([FromBody] AddEventDto newEvent)
+        {
+            if (newEvent is null)
+                    return BadRequest("AddEventDto object is null");
+
+            var addNewEvent = _service.EventService.AddEvent(newEvent);
+
+            return Ok(addNewEvent);
+        }
+
+        [HttpPut]
+        [Route("update-event-details")]
+
+        public IActionResult UpdateEventDetails(string title, [FromBody] UpdateEventDetailsDto newEventDetails)
+        {
+            if (newEventDetails is null)
+                    return BadRequest("UpdateEventDetailsDto object is null");
+
+            _service.EventService.UpdateEventDetails(title, newEventDetails, trackChanges: true);
+
+            return Ok(newEventDetails);
+
+        }
+
+        [HttpDelete]
+        [Route("delete-event")]
+        public IActionResult DeleteEvent(string title)
+        {
+            _service.EventService.DeleteEvent(title, trackchanges: false);
+
+            return Ok("Event Deleted successfully");
+        }
+
+
     }
 }

@@ -11,7 +11,12 @@ namespace Repository
 
         public IEnumerable<Event> GetAllEvents(bool trackChanges) =>
             FindAll(trackChanges)
-            .OrderBy(c => c.EventTitle)
+            .OrderBy(e => e.EventTitle)
+            .ToList();
+
+        public IEnumerable<Event> GetEventsByTime(string time, bool trackChanges) =>
+            FindByCondition(e => e.EventTime == time, trackChanges)
+            .OrderBy(e => e.EventTitle)
             .ToList();
 
 
@@ -19,6 +24,10 @@ namespace Repository
         public Event GetEventByTitle(string title, bool trackChanges) =>
             FindByCondition(e => e.EventTitle == title, trackChanges)
             .SingleOrDefault();
+
+        public void AddEvent(Event newEvent) => Create(newEvent);
+
+        public void DeleteEvent(Event eventName) => Delete(eventName);
 
     } 
 
