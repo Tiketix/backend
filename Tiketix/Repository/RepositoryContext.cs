@@ -16,17 +16,10 @@ namespace Repository
             {
                 base.OnModelCreating(modelBuilder);
                 
-                modelBuilder.ApplyConfiguration(new ClientConfiguration());
                 modelBuilder.ApplyConfiguration(new EventConfiguration());
-                base.OnModelCreating(modelBuilder);
-            // Configure entity relationships and constraints here, if needed.
+                modelBuilder.ApplyConfiguration(new RoleConfiguration());
             }
-            public DbSet<Client>? Clients { get; set; }
             public DbSet<Event>? Events { get; set; }
-
-            public DbSet<Ticket> Tickets { get; set; }  // DbSet for tickets
-        public DbSet<Payment> Payments { get; set; }  // DbSet for payments
-
 
     }
 }
