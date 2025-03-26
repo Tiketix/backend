@@ -5,7 +5,7 @@ using System.Text;
 using AutoMapper;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Service.Contracts;
@@ -37,7 +37,7 @@ namespace Service
 
                 #pragma warning disable CS8604 // Possible null reference argument.
             var result = await _userManager.CreateAsync(user, registration.Password);
-
+            
             return result;
         }
 
@@ -138,6 +138,35 @@ namespace Service
             return await _userManager.DeleteAsync(user);
            
         }
+
+        public async Task<IdentityResult> ConfirmEmail(string email, string token)
+        {
+            // if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+            // {
+            //     return IdentityResult.Failed(new IdentityError { Description = "Invalid email confirmation parameters."});
+            // }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "User not Found." });
+            }
+
+            // Decode the token
+            token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+
+            // Confirm email
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (result.Succeeded)
+            {
+                user.EmailConfirmed = true;
+                return await _userManager.UpdateAsync(user);
+            }
+    
+            return IdentityResult.Failed(new IdentityError { Description = "Email Confirmation Failed" });
+        }
+    
 
 
 

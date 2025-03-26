@@ -1,3 +1,4 @@
+using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -15,16 +16,26 @@ namespace EventClients.Presentation.Controllers
         [HttpPost("register-user")]
         public async Task<IActionResult> RegisterUser([FromBody] RegistrationDto registration)
         {
-        var result = await _service.AuthService.RegisterUser(registration);
-        if (!result.Succeeded)
-        {
-            foreach (var error in result.Errors)
+            var user = new User
             {
-            ModelState.TryAddModelError(error.Code, error.Description);
+                Email = registration.Email
+            };
+            var result = await _service.AuthService.RegisterUser(registration);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                ModelState.TryAddModelError(error.Code, error.Description);
+                }
+                return BadRequest(ModelState);
             }
-            return BadRequest(ModelState);
-        }
-        return Ok("User Created successfully");
+            // Send confirmation email
+            await _service.EmailService.SendConfirmationEmailAsync(user);
+
+        
+            return Ok(new { 
+                    message = "Registration successful. Please check your email to confirm your account." 
+                });
         }
 
         [HttpPost("register-admin")]
@@ -120,6 +131,17 @@ namespace EventClients.Presentation.Controllers
 
             return Ok("Account Deleted successfully");
         }
+
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
+        {
+            var result = await _service.AuthService.ConfirmEmail(email, token);
+
+            if (result.Succeeded)
+                return Ok("Email Confirmed successfully");
+            return BadRequest(result.Errors);
+        }
+        
 
 
     }

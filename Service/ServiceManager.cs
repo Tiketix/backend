@@ -12,6 +12,7 @@ namespace Service
         private readonly Lazy<IClientService> _clientService;
         private readonly Lazy<IEventService> _eventService;
         private readonly Lazy<IAuthService> _authService;
+        private readonly Lazy<IEmailService> _emailService;
         public ServiceManager(IRepositoryManager repositoryManager, IMapper mapper,
                                 UserManager<User> userManager, IConfiguration configuration)
         {
@@ -21,9 +22,12 @@ namespace Service
             EventService(repositoryManager, mapper));
             _authService = new Lazy<IAuthService>(() =>new 
             AuthService(mapper, userManager, configuration));
+            _emailService = new Lazy<IEmailService>(() =>new 
+            EmailService(userManager, configuration));
         }
         public IClientService ClientService => _clientService.Value;
         public IEventService EventService => _eventService.Value;
         public IAuthService AuthService => _authService.Value;
+        public IEmailService EmailService => _emailService.Value;
     }
 }
