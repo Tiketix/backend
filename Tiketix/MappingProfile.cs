@@ -16,6 +16,7 @@ public class MappingProfile : Profile
                 .ForMember(c => c.Email,
                     opt => opt.MapFrom(c => c.Email));
 
+
         CreateMap<AddEventDto, Event>();
 
         CreateMap<RegistrationDto, User>();
@@ -23,7 +24,6 @@ public class MappingProfile : Profile
         CreateMap<AdminRegistrationDto, User>();
 
         CreateMap<UpdateEventDetailsDto, Event>();
-
 
     }
 }

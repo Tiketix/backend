@@ -32,7 +32,6 @@ namespace EventClients.Presentation.Controllers
             // Send confirmation email
             await _service.EmailService.SendConfirmationEmailAsync(user);
 
-        
             return Ok(new { 
                     message = "Registration successful. Please check your email to confirm your account." 
                 });
@@ -132,15 +131,19 @@ namespace EventClients.Presentation.Controllers
             return Ok("Account Deleted successfully");
         }
 
-        [HttpPost("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(string email, string token)
+        [HttpGet("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
-            var result = await _service.AuthService.ConfirmEmail(email, token);
+            var result = await _service.AuthService.ConfirmEmail(userId, token);
 
             if (result.Succeeded)
-                return Ok("Email Confirmed successfully");
-            return BadRequest(result.Errors);
+            {
+                return Ok("Email confirmed successfully.");
+            }
+
+            return BadRequest("Email confirmation failed.");
         }
+
         
 
 

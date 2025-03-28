@@ -23,7 +23,7 @@ namespace Service
             _authService = new Lazy<IAuthService>(() =>new 
             AuthService(mapper, userManager, configuration));
             _emailService = new Lazy<IEmailService>(() =>new 
-            EmailService(userManager, configuration));
+            EmailService(userManager, repositoryManager, configuration, mapper));
         }
         public IClientService ClientService => _clientService.Value;
         public IEventService EventService => _eventService.Value;

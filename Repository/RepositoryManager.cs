@@ -11,7 +11,7 @@ public sealed class RepositoryManager : IRepositoryManager
         _repositoryContext = repositoryContext;
         _eventRepository = new Lazy<IEventRepository>(() => new
         EventRepository(repositoryContext));
-    }
+        }
     public IEventRepository Event => _eventRepository.Value;
     public void Save() => _repositoryContext.SaveChanges();
 }

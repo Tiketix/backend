@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Tiketix.Migrations
 {
     /// <inheritdoc />
-    public partial class IdentityTables : Migration
+    public partial class databaseCreation : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,10 +32,11 @@ namespace Tiketix.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -49,6 +52,25 @@ namespace Tiketix.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    EventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EventTitle = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    EventDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OrganizerEmail = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TicketsAvailable = table.Column<int>(type: "int", nullable: false),
+                    EventDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    EventTime = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.EventId);
                 });
 
             migrationBuilder.CreateTable(
@@ -157,6 +179,24 @@ namespace Tiketix.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "63962830-36eb-4012-b0b8-713b441be420", null, "Manager", "MANAGER" },
+                    { "f7e7738c-18ba-4d89-a093-1a611033187e", null, "Administrator", "ADMINISTRATOR" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Events",
+                columns: new[] { "EventId", "EventDate", "EventDescription", "EventTime", "EventTitle", "Location", "OrganizerEmail", "Phone", "TicketsAvailable" },
+                values: new object[,]
+                {
+                    { new Guid("80abbca8-664d-4b20-b5de-024705497d4a"), new DateOnly(2025, 3, 25), "It is a meeting event for people in tech", "7pm", "IT_Solutions Seminar", "100 Brick Dr. Gwynn Oak, MD 21207", "solutions@gmail.com", "0106896565", 100 },
+                    { new Guid("c9d4c053-49b6-410c-bc78-2d54a9991870"), new DateOnly(2025, 3, 2), "Boost your career forward in 20 minutes", "7pm", "Career_Solutions Ltd", "583 Wall Dr. Gwynn Oak, MD 21207", "career@gmail.com", "01895684", 100 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -214,6 +254,9 @@ namespace Tiketix.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Events");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

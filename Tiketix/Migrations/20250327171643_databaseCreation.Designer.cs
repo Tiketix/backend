@@ -12,8 +12,8 @@ using Repository;
 namespace Tiketix.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250314014319_IdentityTables")]
-    partial class IdentityTables
+    [Migration("20250327171643_databaseCreation")]
+    partial class databaseCreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,61 +24,6 @@ namespace Tiketix.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Entities.Models.Client", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ClientId");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Clients");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("c9d4c053-49b6-410c-bc78-2d54a9991870"),
-                            Email = "tobi@gmail.com",
-                            FirstName = "Tobi",
-                            LastName = "Temi",
-                            Password = "jdjkjf55",
-                            Phone = "090565695"
-                        },
-                        new
-                        {
-                            Id = new Guid("3d490a70-94ce-4d15-9494-5248280c2ce3"),
-                            Email = "oredebby@gmail.com",
-                            FirstName = "Ore",
-                            LastName = "Debby",
-                            Password = "diuwdj293",
-                            Phone = "0209595986"
-                        });
-                });
 
             modelBuilder.Entity("Entities.Models.Event", b =>
                 {
@@ -164,12 +109,17 @@ namespace Tiketix.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -184,10 +134,6 @@ namespace Tiketix.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -246,6 +192,20 @@ namespace Tiketix.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "63962830-36eb-4012-b0b8-713b441be420",
+                            Name = "Manager",
+                            NormalizedName = "MANAGER"
+                        },
+                        new
+                        {
+                            Id = "f7e7738c-18ba-4d89-a093-1a611033187e",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

@@ -113,11 +113,9 @@ namespace Tiketix.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -195,13 +193,13 @@ namespace Tiketix.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2e6660f2-9c82-459b-b2e6-a7e723201457",
+                            Id = "63962830-36eb-4012-b0b8-713b441be420",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "dd2a1e80-79ee-4282-b5a3-f76a01b65e2e",
+                            Id = "f7e7738c-18ba-4d89-a093-1a611033187e",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });

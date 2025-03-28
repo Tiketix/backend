@@ -16,12 +16,12 @@ namespace Service.Contracts
         Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword);
 
         Task<IdentityResult> DeleteUser(string email, string password);
-        
-        Task<IdentityResult> ConfirmEmail(string email, string token);
-        
+                
         Task<(bool, LoginDto UserData)> ValidateUser(AuthDto authDto);
 
         Task<string> CreateToken();
+
+        Task<IdentityResult> ConfirmEmail(string userId, string token);
     }
 }
 

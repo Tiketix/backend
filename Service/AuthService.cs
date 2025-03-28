@@ -45,11 +45,9 @@ namespace Service
         {
             var user = _mapper.Map<User>(registration);
 
-            var result = await _userManager.AddToRolesAsync(user, registration.Roles);
-            if (!result.Succeeded)
-                throw new Exception("Role does not exist");
-
             await _userManager.CreateAsync(user, registration.Password);
+
+            var result = await _userManager.AddToRolesAsync(user, registration.Roles);
             
             return result;
         }
@@ -139,17 +137,17 @@ namespace Service
            
         }
 
-        public async Task<IdentityResult> ConfirmEmail(string email, string token)
+        public async Task<IdentityResult> ConfirmEmail(string userId, string token)
         {
-            // if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
-            // {
-            //     return IdentityResult.Failed(new IdentityError { Description = "Invalid email confirmation parameters."});
-            // }
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return IdentityResult.Failed(new IdentityError { Description = "Invalid email confirmation parameters." });
+            }
 
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return IdentityResult.Failed(new IdentityError { Description = "User not Found." });
+                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
             }
 
             // Decode the token
@@ -160,12 +158,13 @@ namespace Service
 
             if (result.Succeeded)
             {
-                user.EmailConfirmed = true;
-                return await _userManager.UpdateAsync(user);
+                return IdentityResult.Success;
             }
-    
-            return IdentityResult.Failed(new IdentityError { Description = "Email Confirmation Failed" });
+
+            return IdentityResult.Failed(new IdentityError { Description = "Email Confirmation Failed." });
         }
+
+        
     
 
 
