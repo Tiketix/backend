@@ -7,4 +7,5 @@ public interface IServiceManager
     IEventService EventService { get; }
     IAuthService AuthService { get; }
     IEmailService EmailService { get; }
+    IEmailVerificationTokenService EmailVerificationTokenService { get; }
 }

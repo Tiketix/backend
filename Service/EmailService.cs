@@ -30,17 +30,60 @@ namespace Service
 
 
 
+        // Generate a 6-digit token
+        private string Generate6DigitToken()
+        {
+            Random random = new Random();
+            return random.Next(100000, 999999).ToString();
+        }
+
+        // public string GenerateEmailConfirmationTokenAsync(string email)
+        // {
+        //     // Generate 6-digit token
+        //     string token = Generate6DigitToken();
+
+        //     // Create token entity
+        //     var verificationToken = new EmailVerificationToken
+        //     {
+        //         Email = email,
+        //         Token = token,
+        //         ExpiryTime = DateTime.UtcNow.AddHours(1),
+        //         IsUsed = false
+        //     };
+
+        //     // Save token to database
+        //     _repository.EmailVerificationToken.AddToken(verificationToken);
+        //     _repository.Save();
+
+        //     return token;
+        // }
 
         public async Task<bool> SendConfirmationEmailAsync(User user)
         {
             try 
             {
-                // Generate email confirmation token
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                // // Generate email confirmation token
+                // var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 
-                // Encode the token to be URL-safe
-                token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+                // // Encode the token to be URL-safe
+                // token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
                 
+                var token = Generate6DigitToken();
+
+                // Create token entity
+                #pragma warning disable CS8601 // Possible null reference assignment.
+                var verificationToken = new EmailVerificationToken
+                {
+                    Email = user.Email,
+                    Token = token,
+                    ExpiryTime = DateTime.UtcNow.AddHours(1),
+                    IsUsed = false
+                };
+
+                // Save token to database
+                _repository.EmailVerificationToken.AddToken(verificationToken);
+                _repository.Save();
                 
 
                 // Create confirmation link
@@ -48,7 +91,8 @@ namespace Service
 
                 // Compose email content
                     #pragma warning disable CS8604 // Possible null reference argument.
-                var emailBody = CreateConfirmationEmailBody(user.Email, confirmationLink);
+                // var emailBody = CreateConfirmationEmailBody(user.Email, confirmationLink);
+                var emailBody = CreateConfirmationEmailBody(token, confirmationLink);
 
                 // Send email using Gmail SMTP
                 await SendEmailWithGmailSmtp(
@@ -73,18 +117,18 @@ namespace Service
             return $"http://localhost:5013/swagger/confirm-email?userId={userId}&token={token}";
         }
 
-        private string CreateConfirmationEmailBody(string email, string confirmationLink)
+        private string CreateConfirmationEmailBody(string token, string confirmationLink)
         {
             return $@"
             <html>
             <body>
                 <h2>Tiketix Email Confirmation</h2>
                 <p>Hello,</p>
-                <p>Thank you for registering. Please confirm your email by clicking the link below:</p>
-                <p><a href='{confirmationLink}'>Confirm Email</a></p>
+                <p>Thank you for registering. Please confirm your email by entering the code below:</p>
+                <p>{token}</p>
                 <p>If the link doesn't work, copy and paste the following URL in your browser:</p>
                 <p>{confirmationLink}</p>
-                <p>This link will expire in 15 minutes.</p>
+                <p>This link will expire in 1 hour.</p>
                 <p>Best regards,<br>Tiketix</p>
             </body>
             </html>";

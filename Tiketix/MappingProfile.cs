@@ -15,6 +15,9 @@ public class MappingProfile : Profile
         CreateMap<User, LoginDto>()
                 .ForMember(c => c.Email,
                     opt => opt.MapFrom(c => c.Email));
+        CreateMap<EmailVerificationToken, EmailVerificationTokenDto>()
+                .ForMember(c => c.Email,
+                    opt => opt.MapFrom(c => c.Email));
 
 
         CreateMap<AddEventDto, Event>();
@@ -24,6 +27,8 @@ public class MappingProfile : Profile
         CreateMap<AdminRegistrationDto, User>();
 
         CreateMap<UpdateEventDetailsDto, Event>();
+
+        CreateMap<AddEmailVerificationTokenDto, EmailVerificationToken>();
 
     }
 }

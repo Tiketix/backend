@@ -132,16 +132,24 @@ namespace EventClients.Presentation.Controllers
         }
 
         [HttpGet("confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            var result = await _service.AuthService.ConfirmEmail(userId, token);
+            await _service.ClientService.GetUserByEmail(email);
 
-            if (result.Succeeded)
+            var sentToken = _service.EmailVerificationTokenService.GetToken(email, false);
+            if (sentToken == null)
             {
-                return Ok("Email confirmed successfully.");
+                ModelState.AddModelError("", "verification code empty");
             }
+            else if(sentToken.Token != token)
+            {
+                ModelState.AddModelError("", "Invalid or expired verification code");
 
-            return BadRequest("Email confirmation failed.");
+            }
+            else if(sentToken.Token == token)
+            await _service.AuthService.ConfirmEmail(email, token);
+            return Ok("Email confirmed successfully.");
+            
         }
 
         

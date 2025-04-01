@@ -137,27 +137,22 @@ namespace Service
            
         }
 
-        public async Task<IdentityResult> ConfirmEmail(string userId, string token)
+        public async Task<IdentityResult> ConfirmEmail(string email, string token)
         {
-            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
             {
                 return IdentityResult.Failed(new IdentityError { Description = "Invalid email confirmation parameters." });
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "User not found." });
-            }
-
-            // Decode the token
-            token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+            var user = await _userManager.FindByEmailAsync(email);
 
             // Confirm email
             var result = await _userManager.ConfirmEmailAsync(user, token);
 
             if (result.Succeeded)
             {
+                user.EmailConfirmed = true;
                 return IdentityResult.Success;
             }
 

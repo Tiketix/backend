@@ -21,6 +21,8 @@ namespace Repository
                 modelBuilder.ApplyConfiguration(new RoleConfiguration());
             }
             public DbSet<Event>? Events { get; set; }
+            public DbSet<EmailVerificationToken>? EmailVerificationToken { get; set; }
+            
 
     }
 }
