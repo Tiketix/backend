@@ -25,7 +25,7 @@ namespace Service
             return tokenDto;
         }
 
-        //you can get the token in endpoint later.
+        
 
         public EmailVerificationTokenDto AddToken(AddEmailVerificationTokenDto token)
         {

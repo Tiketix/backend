@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
+using Contracts;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
@@ -19,15 +20,17 @@ namespace Service
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IRepositoryManager _repository;
 
 
         private User? _user;
 
-        public AuthService(IMapper mapper, UserManager<User> userManager, IConfiguration configuration)
+        public AuthService(IMapper mapper, UserManager<User> userManager, IConfiguration configuration, IRepositoryManager repository)
         {
             _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
+            _repository = repository;
         }
 
 
@@ -121,6 +124,7 @@ namespace Service
             // Use the built-in ChangePasswordAsync method
             return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
         }
+        
 
         public async Task<IdentityResult> DeleteUser(string email, string password)
         {
@@ -136,33 +140,49 @@ namespace Service
             return await _userManager.DeleteAsync(user);
            
         }
-
-        public async Task<IdentityResult> ConfirmEmail(string email, string token)
+        public async Task<IdentityResult> DeleteUnregisteredUser(string email)
         {
-            
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
-            {
-                return IdentityResult.Failed(new IdentityError { Description = "Invalid email confirmation parameters." });
-            }
-
             var user = await _userManager.FindByEmailAsync(email);
-
-            // Confirm email
-            var result = await _userManager.ConfirmEmailAsync(user, token);
-
-            if (result.Succeeded)
-            {
-                user.EmailConfirmed = true;
-                return IdentityResult.Success;
-            }
-
-            return IdentityResult.Failed(new IdentityError { Description = "Email Confirmation Failed." });
+            if (user == null)
+                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+    
+            return await _userManager.DeleteAsync(user);
+           
         }
 
-        
-    
+        public async Task<IdentityResult> ConfirmEmail(string email, string token)
+        { 
+            var user = await _userManager.FindByEmailAsync(email);
+            if(user == null)
+            {
+                throw new Exception("User not found!!");
+            }
 
+            var tokenEntry = _repository.EmailVerificationToken.GetToken(email, false);
 
+            if(tokenEntry == null)
+                throw new Exception("Token is invalid!!");
+            if(tokenEntry.Token != token)
+                throw new Exception("Token is incorrect!!");
+            if(tokenEntry.Token == token & tokenEntry.ExpiryTime < DateTime.UtcNow)
+            {
+                _repository.EmailVerificationToken.RemoveToken(tokenEntry);
+                
+                throw new Exception("Token has expired!!");
+            }
+            if(tokenEntry.Token == token)
+            {
+                // Confirm email
+                user.EmailConfirmed = true;
+                tokenEntry.IsUsed = true;
+
+                if(tokenEntry.IsUsed)
+                    _repository.EmailVerificationToken.RemoveToken(tokenEntry);
+                
+            }
+            return await _userManager.UpdateAsync(user);
+            //FIX EXPIRED TOKENS!!!
+        }
 
 
 

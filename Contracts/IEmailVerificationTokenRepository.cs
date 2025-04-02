@@ -7,6 +7,7 @@ namespace Contracts
     {
         EmailVerificationToken GetToken(string email, bool trackChanges);
         void AddToken(EmailVerificationToken token);
+        void RemoveToken(EmailVerificationToken token);
     }
 
 }

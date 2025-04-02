@@ -14,9 +14,11 @@ namespace Repository
         #pragma warning disable CS8603 // Possible null reference return.
         public EmailVerificationToken GetToken(string email, bool trackChanges) =>
             FindByCondition(t => t.Email.Equals(email), trackChanges)
-            .SingleOrDefault();
+            .FirstOrDefault();
 
         public void AddToken(EmailVerificationToken token) => Create(token);
+
+        public void RemoveToken(EmailVerificationToken token) => Delete(token);
     }
 }
 

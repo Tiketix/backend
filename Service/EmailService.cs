@@ -77,7 +77,7 @@ namespace Service
                 {
                     Email = user.Email,
                     Token = token,
-                    ExpiryTime = DateTime.UtcNow.AddHours(1),
+                    ExpiryTime = DateTime.UtcNow.AddMinutes(15),
                     IsUsed = false
                 };
 
@@ -125,10 +125,10 @@ namespace Service
                 <h2>Tiketix Email Confirmation</h2>
                 <p>Hello,</p>
                 <p>Thank you for registering. Please confirm your email by entering the code below:</p>
-                <p>{token}</p>
+                <h2><p>{token}</p></h2>
                 <p>If the link doesn't work, copy and paste the following URL in your browser:</p>
                 <p>{confirmationLink}</p>
-                <p>This link will expire in 1 hour.</p>
+                <p>This token will expire in 15 minutes.</p>
                 <p>Best regards,<br>Tiketix</p>
             </body>
             </html>";

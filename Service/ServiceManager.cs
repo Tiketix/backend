@@ -23,7 +23,7 @@ namespace Service
             _eventService = new Lazy<IEventService>(() => new
             EventService(repositoryManager, mapper));
             _authService = new Lazy<IAuthService>(() =>new 
-            AuthService(mapper, userManager, configuration));
+            AuthService(mapper, userManager, configuration, repositoryManager));
             _emailService = new Lazy<IEmailService>(() =>new 
             EmailService(userManager, repositoryManager, configuration, mapper));
             _emailVerificationTokenService = new Lazy<IEmailVerificationTokenService>(() =>new

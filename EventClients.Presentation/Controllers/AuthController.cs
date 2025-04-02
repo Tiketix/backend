@@ -18,8 +18,9 @@ namespace EventClients.Presentation.Controllers
         {
             var user = new User
             {
-                Email = registration.Email
-            };
+                Email = registration.Email,
+            };             
+            
             var result = await _service.AuthService.RegisterUser(registration);
             if (!result.Succeeded)
             {
@@ -29,28 +30,49 @@ namespace EventClients.Presentation.Controllers
                 }
                 return BadRequest(ModelState);
             }
+            
             // Send confirmation email
-            await _service.EmailService.SendConfirmationEmailAsync(user);
-
+            var emailSent = await _service.EmailService.SendConfirmationEmailAsync(user);
+            if (!emailSent)
+            {
+                #pragma warning disable CS8604 // Possible null reference argument.
+                await _service.AuthService.DeleteUnregisteredUser(user.Email);
+                return BadRequest("Email Not Sent, Check Your Network and Try Again Please.");
+            }
             return Ok(new { 
                     message = "Registration successful. Please check your email to confirm your account." 
                 });
+            
         }
 
         [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] AdminRegistrationDto registration)
         {
-        var result = await _service.AuthService.RegisterAdmin(registration);
-        if (!result.Succeeded)
-        {
-            foreach (var error in result.Errors)
+            var user = new User
             {
-            ModelState.TryAddModelError(error.Code, error.Description);
+                Email = registration.Email,
+            }; 
+            var result = await _service.AuthService.RegisterAdmin(registration);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                ModelState.TryAddModelError(error.Code, error.Description);
+                }
+                return BadRequest(ModelState);
             }
-            return BadRequest(ModelState);
-        }
-        return Ok("Admin-User Created successfully");
-        }
+
+            // Send confirmation email
+            var emailSent = await _service.EmailService.SendConfirmationEmailAsync(user);
+            if (!emailSent)
+            {
+                await _service.AuthService.DeleteUnregisteredUser(user.Email);
+                return BadRequest("Email Not Sent, Check Your Network and Try Again Please.");
+            }
+            return Ok(new { 
+                    message = "Admin Registration successful. Please check your email to confirm your account." 
+                });
+            }
         
         
         [HttpPost("admin-login")]
@@ -131,25 +153,33 @@ namespace EventClients.Presentation.Controllers
             return Ok("Account Deleted successfully");
         }
 
+        [HttpPost("send-confirmation-email")]
+        public async Task<IActionResult> SendToken([FromBody] AuthDto authDto)
+        {
+            var user = new User
+            {
+                Email = authDto.Email,
+            }; 
+
+            await _service.AuthService.ValidateUser(authDto);
+            if (false)
+                throw new Exception("incorrect credentials!!");
+
+            await _service.EmailService.SendConfirmationEmailAsync(user);
+            return Ok(new { 
+                    message = "Please check your email to confirm your account." 
+                });
+        }
+
         [HttpGet("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            await _service.ClientService.GetUserByEmail(email);
-
-            var sentToken = _service.EmailVerificationTokenService.GetToken(email, false);
-            if (sentToken == null)
-            {
-                ModelState.AddModelError("", "verification code empty");
-            }
-            else if(sentToken.Token != token)
-            {
-                ModelState.AddModelError("", "Invalid or expired verification code");
-
-            }
-            else if(sentToken.Token == token)
-            await _service.AuthService.ConfirmEmail(email, token);
-            return Ok("Email confirmed successfully.");
+            var result = await _service.AuthService.ConfirmEmail(email, token);
             
+            if (result.Succeeded)
+                return Ok("Email Confirmed Successfully");
+                
+            return BadRequest(result.Errors);
         }
 
         

@@ -16,7 +16,9 @@ namespace Service.Contracts
         Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword);
 
         Task<IdentityResult> DeleteUser(string email, string password);
-                
+
+        Task<IdentityResult> DeleteUnregisteredUser(string email);
+
         Task<(bool, LoginDto UserData)> ValidateUser(AuthDto authDto);
 
         Task<string> CreateToken();
