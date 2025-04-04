@@ -48,9 +48,14 @@ namespace Service
         {
             var user = _mapper.Map<User>(registration);
 
-            await _userManager.CreateAsync(user, registration.Password);
+            var result = await _userManager.CreateAsync(user, registration.Password);
 
-            var result = await _userManager.AddToRolesAsync(user, registration.Roles);
+            if(result == null)
+            {
+                throw new Exception("Incorrect credentials");
+            }
+
+            await _userManager.AddToRolesAsync(user, registration.Roles);
             
             return result;
         }
