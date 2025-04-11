@@ -20,6 +20,8 @@ builder.Services.AddAuthentication();
 
 builder.Services.ConfigureIdentity();
 
+builder.Services.ConfigureCors();
+
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.ConfigureJWT(builder.Configuration);
