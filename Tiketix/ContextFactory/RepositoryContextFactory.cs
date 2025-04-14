@@ -13,8 +13,13 @@ namespace Tiketix.ContextFactory
             // .AddJsonFile("appsettings.json")
             // .Build();
 
+            // var builder = new DbContextOptionsBuilder<RepositoryContext>()
+            // .UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection"), 
+            // b => b.MigrationsAssembly("Tiketix"));
+
             var builder = new DbContextOptionsBuilder<RepositoryContext>()
-            .UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection"), 
+            .UseMySql(Environment.GetEnvironmentVariable("DefaultConnection1"),
+            ServerVersion.AutoDetect(Environment.GetEnvironmentVariable("DefaultConnection1")),
             b => b.MigrationsAssembly("Tiketix"));
 
             return new RepositoryContext(builder.Options);

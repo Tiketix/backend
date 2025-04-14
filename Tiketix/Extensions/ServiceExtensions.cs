@@ -30,9 +30,14 @@ namespace tiketix.Extensions
         public static void ConfigureServiceManager(this IServiceCollection services) =>
                                 services.AddScoped<IServiceManager, ServiceManager>();
 
+        // public static void ConfigureSqlContext(this IServiceCollection services) =>
+        //                         services.AddDbContext<RepositoryContext>(opts =>
+        //                         opts.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")));
+
         public static void ConfigureSqlContext(this IServiceCollection services) =>
                                 services.AddDbContext<RepositoryContext>(opts =>
-                                opts.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")));
+                                opts.UseMySql(Environment.GetEnvironmentVariable("DefaultConnection1"),
+                                ServerVersion.AutoDetect(Environment.GetEnvironmentVariable("DefaultConnection1"))));
 
         public static void ConfigureRateLimitingOptions(this IServiceCollection services)
         {
