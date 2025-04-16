@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 
 # Set up the app environment
 
-WORKDIR /app
+WORKDIR /Tiketix.API
 
 # Copy everything and build
 
@@ -16,7 +16,7 @@ RUN dotnet publish -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
-WORKDIR /app
+WORKDIR /Tiketix.API/Tiketix
 
 COPY --from=build-env /app/out .
 
