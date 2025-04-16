@@ -22,4 +22,4 @@ COPY --from=build-env /app/out .
 
 # Start the app
 
-ENTRYPOINT ["dotnet", "Tiketix-API.dll"]
+ENTRYPOINT ["dotnet", "Tiketix"]
