@@ -11,8 +11,8 @@ using Repository;
 namespace Tiketix.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    [Migration("20250414185940_initialMigration")]
-    partial class initialMigration
+    [Migration("20250416115427_initialOnlineMigration")]
+    partial class initialOnlineMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -217,13 +217,13 @@ namespace Tiketix.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "b08e0b00-8766-4ce4-95f4-c168f36259d9",
+                            Id = "9012bde3-fa95-4574-856d-25ae9d723f72",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "b738b7cb-be0b-4a6d-8fbd-caccbafdfa58",
+                            Id = "b583a18b-cdab-449b-bb9d-d322e8f6389a",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         });

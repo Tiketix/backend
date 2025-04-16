@@ -18,8 +18,8 @@ namespace Tiketix.ContextFactory
             // b => b.MigrationsAssembly("Tiketix"));
 
             var builder = new DbContextOptionsBuilder<RepositoryContext>()
-            .UseMySql(Environment.GetEnvironmentVariable("DefaultConnection1"),
-            ServerVersion.AutoDetect(Environment.GetEnvironmentVariable("DefaultConnection1")),
+            .UseMySql(Environment.GetEnvironmentVariable("DefaultConnection2"),
+            ServerVersion.AutoDetect(Environment.GetEnvironmentVariable("DefaultConnection2")),
             b => b.MigrationsAssembly("Tiketix"));
 
             return new RepositoryContext(builder.Options);

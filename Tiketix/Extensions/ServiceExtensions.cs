@@ -36,8 +36,8 @@ namespace tiketix.Extensions
 
         public static void ConfigureSqlContext(this IServiceCollection services) =>
                                 services.AddDbContext<RepositoryContext>(opts =>
-                                opts.UseMySql(Environment.GetEnvironmentVariable("DefaultConnection1"),
-                                ServerVersion.AutoDetect(Environment.GetEnvironmentVariable("DefaultConnection1"))));
+                                opts.UseMySql(Environment.GetEnvironmentVariable("DefaultConnection2"),
+                                ServerVersion.AutoDetect(Environment.GetEnvironmentVariable("DefaultConnection2"))));
 
         public static void ConfigureRateLimitingOptions(this IServiceCollection services)
         {
