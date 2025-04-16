@@ -4,21 +4,23 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 
 # Set up the app environment
 
-WORKDIR /Tiketix.API
+WORKDIR /app
 
 # Copy everything and build
 
 COPY . ./
 
-RUN dotnet publish -c Release -o out
+# RUN dotnet publish -c Release -o out
+RUN dotnet publish Tiketix/Tiketix.csproj -c Release -o out
+
 
 # Runtime image
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
-WORKDIR /Tiketix.API/Tiketix
+WORKDIR /app
 
-COPY --from=build-env /Tiketix.API/out .
+COPY --from=build-env /app/out .
 
 # Start the app
 
