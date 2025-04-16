@@ -18,7 +18,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
 WORKDIR /Tiketix.API/Tiketix
 
-COPY --from=build-env /Tiketix.API/Tiketix/out .
+COPY --from=build-env /Tiketix.API/out .
 
 # Start the app
 
