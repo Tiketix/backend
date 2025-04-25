@@ -22,6 +22,15 @@ namespace tiketix.Extensions
                                                 .AllowAnyMethod()
                                                 .AllowAnyHeader());
             });
+        // public static void ConfigureCors(this IServiceCollection services) =>
+        //     services.AddCors(options =>
+        //     {
+        //         options.AddPolicy("AllowLocalhost3000", builder =>
+        //                                         builder.WithOrigins("http://localhost:3000")
+        //                                         .AllowAnyMethod()
+        //                                         .AllowAnyHeader()
+        //                                         .AllowCredentials());
+        //     });
 
 
         public static void ConfigureRepositoryManager(this IServiceCollection services) =>
