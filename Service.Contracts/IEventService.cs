@@ -10,5 +10,5 @@ public interface IEventService
     EventDto AddEvent(AddEventDto newEvent);
     void UpdateEventDetails(string title, UpdateEventDetailsDto updateEventDetails, bool trackChanges);
 
-    void DeleteEvent(string title, bool trackchanges);
+    void DeleteEvent(Guid id, bool trackchanges);
 }

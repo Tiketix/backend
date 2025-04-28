@@ -25,6 +25,10 @@ namespace Repository
             FindByCondition(e => e.EventTitle == title, trackChanges)
             .SingleOrDefault();
 
+        public Event GetEventById(Guid id, bool trackChanges) =>
+            FindByCondition(e => e.Id == id, trackChanges)
+            .SingleOrDefault();
+
         public void AddEvent(Event newEvent) => Create(newEvent);
 
         public void DeleteEvent(Event eventName) => Delete(eventName);

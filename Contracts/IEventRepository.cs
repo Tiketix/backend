@@ -9,6 +9,7 @@ namespace Contracts
         IEnumerable<Event> GetEventsByTime(string time, bool trackChanges);
 
         Event GetEventByTitle(string title, bool trackChanges);
+        Event GetEventById(Guid id, bool trackChanges);
 
         void AddEvent(Event newEvent);
 

@@ -80,9 +80,9 @@ internal sealed class EventService : IEventService
         return returnEvent;
     }
 
-    public void DeleteEvent(string title, bool trackchanges)
+    public void DeleteEvent(Guid id, bool trackchanges)
     {
-        var eventName = _repository.Event.GetEventByTitle(title, trackchanges) ?? throw new Exception("event does not exist in database");
+        var eventName = _repository.Event.GetEventById(id, trackchanges) ?? throw new Exception("event does not exist in database");
 
         _repository.Event.DeleteEvent(eventName);
         _repository.Save();
