@@ -36,7 +36,17 @@ namespace Entities.Models
         [Required(ErrorMessage = "Event Time is a required field.")]
         public required string EventTime { get; set; }
 
-        public ICollection<Ticket>? Tickets { get; set; }
+
+
+        // Foreign key to user who created event.
+        [ForeignKey("UserId")]
+        public Guid UserId { get; set; }
+
+        //Navigation property to User
+        public virtual User? EventCreator { get; set; }
+
+        //Navigation property for tickets associated to event.
+        public virtual ICollection<Ticket>? Tickets { get; set; }
 
     }
 }

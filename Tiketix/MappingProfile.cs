@@ -12,6 +12,10 @@ public class MappingProfile : Profile
                 .ForMember(c => c.OrganizerEmail,
                     opt => opt.MapFrom(c => c.OrganizerEmail));
 
+        CreateMap<Ticket, TicketDto>()
+                .ForMember(c => c.Id,
+                    opt => opt.MapFrom(c => c.Id));
+
         CreateMap<User, LoginDto>()
                 .ForMember(c => c.Email,
                     opt => opt.MapFrom(c => c.Email));

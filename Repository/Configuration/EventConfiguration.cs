@@ -20,7 +20,7 @@ namespace Repository.Configuration
                 Location = "100 Brick Dr. Gwynn Oak, MD 21207",
                 TicketsAvailable = 100,
                 EventDate = new DateOnly(2025, 03, 25),
-                EventTime = "7pm"
+                EventTime = "7pm",
             },
             new Event
             {
