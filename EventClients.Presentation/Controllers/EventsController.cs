@@ -94,9 +94,9 @@ namespace EventClients.Presentation.Controllers
 
         [HttpDelete]
         [Route("delete-event")]
-        public IActionResult DeleteEvent(string title)
+        public IActionResult DeleteEvent(Guid id)
         {
-            _service.EventService.DeleteEvent(title, trackchanges: false);
+            _service.EventService.DeleteEvent(id, trackchanges: false);
 
             return Ok("Event Deleted successfully");
         }

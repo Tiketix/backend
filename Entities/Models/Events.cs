@@ -36,5 +36,7 @@ namespace Entities.Models
         [Required(ErrorMessage = "Event Time is a required field.")]
         public required string EventTime { get; set; }
 
+        public ICollection<Ticket>? Tickets { get; set; }
+
     }
 }
