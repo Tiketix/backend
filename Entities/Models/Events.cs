@@ -39,8 +39,8 @@ namespace Entities.Models
 
 
         // Foreign key to user who created event.
-        [ForeignKey("UserId")]
-        public Guid UserId { get; set; }
+        [ForeignKey("Email")]
+        public string? Email { get; set; }
 
         //Navigation property to User
         public virtual User? EventCreator { get; set; }

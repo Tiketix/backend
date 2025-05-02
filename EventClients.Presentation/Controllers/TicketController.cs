@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
+using Shared.DataTransferObjects;
 
 namespace EventClients.Presentation.Controllers
 {
@@ -26,6 +27,20 @@ namespace EventClients.Presentation.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
+        [HttpPost]
+        [Route("add-ticket")]
+
+        public IActionResult AddTicket([FromBody] AddTicketDto newTicket)
+        {
+            if (newTicket is null)
+                return BadRequest("AddTicketDto object is null");
+
+            var addNewTicket = _service.TicketService.AddTicket(newTicket);
+
+            return Ok(addNewTicket);
+        }
+
     }
 }
 

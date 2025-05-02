@@ -21,7 +21,7 @@ namespace Repository
                 modelBuilder.Entity<Event>()
                     .HasOne(e => e.EventCreator)
                     .WithMany(u => u.CreatedEvents)
-                    .HasForeignKey(e => e.UserId)
+                    .HasForeignKey(e => e.Email)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 modelBuilder.Entity<Ticket>()
@@ -32,12 +32,13 @@ namespace Repository
                 modelBuilder.Entity<Ticket>()
                     .HasOne(t => t.Purchaser)
                     .WithMany(u => u.PurchasedTickets)
-                    .HasForeignKey(t => t.UserEmail);
+                    .HasForeignKey(t => t.Email);
                 
                 modelBuilder.ApplyConfiguration(new EventConfiguration());
                 modelBuilder.ApplyConfiguration(new RoleConfiguration());
             }
             public DbSet<Event>? Events { get; set; }
+            public DbSet<Ticket>? Ticket { get; set; }
             public DbSet<EmailVerificationToken>? EmailVerificationToken { get; set; }
             
 

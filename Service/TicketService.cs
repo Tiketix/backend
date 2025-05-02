@@ -1,6 +1,7 @@
 
 using AutoMapper;
 using Contracts;
+using Entities.Models;
 using Service.Contracts;
 using Shared.DataTransferObjects;
 
@@ -31,5 +32,16 @@ internal sealed class TicketService : ITicketService
         {
             throw new Exception($"There is an error somewhere");
         }
+    }
+
+    public TicketDto AddTicket(AddTicketDto newTicket)
+    {
+        var addNewTicket = _mapper.Map<Ticket>(newTicket);
+
+        _repository.Ticket.AddTicket(addNewTicket);
+        _repository.Save();
+
+        var returnTicket = _mapper.Map<TicketDto>(addNewTicket);
+        return returnTicket;
     }
 }

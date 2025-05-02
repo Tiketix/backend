@@ -13,8 +13,8 @@ public class MappingProfile : Profile
                     opt => opt.MapFrom(c => c.OrganizerEmail));
 
         CreateMap<Ticket, TicketDto>()
-                .ForMember(c => c.Id,
-                    opt => opt.MapFrom(c => c.Id));
+                .ForMember(c => c.Email,
+                    opt => opt.MapFrom(c => c.Email));
 
         CreateMap<User, LoginDto>()
                 .ForMember(c => c.Email,
@@ -33,6 +33,8 @@ public class MappingProfile : Profile
         CreateMap<UpdateEventDetailsDto, Event>();
 
         CreateMap<AddEmailVerificationTokenDto, EmailVerificationToken>();
+
+        CreateMap<AddTicketDto, Ticket>();
 
     }
 }
