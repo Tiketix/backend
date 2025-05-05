@@ -20,11 +20,12 @@ internal sealed class TicketService : ITicketService
     }
 
 
-    public IEnumerable<TicketDto> GetAllTickets(string email, bool trackChanges)
+    public IEnumerable<TicketDto> GetAllTickets(string id, bool trackChanges)
     {
         try
         {
-            var tickets = _repository.Ticket.GetAllTickets(email, trackChanges);
+            var tickets = _repository.Ticket.GetAllTickets(id, trackChanges) ?? throw new Exception("Ticket not found");
+            
             var ticketsDto = _mapper.Map<IEnumerable<TicketDto>>(tickets);
             return ticketsDto;
         }

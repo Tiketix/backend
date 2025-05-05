@@ -4,7 +4,7 @@ namespace Service.Contracts;
 
 public interface ITicketService
 {
-    IEnumerable<TicketDto> GetAllTickets(string email, bool trackChanges);
+    IEnumerable<TicketDto> GetAllTickets(string id, bool trackChanges);
 
     TicketDto AddTicket(AddTicketDto newTicket);
 }

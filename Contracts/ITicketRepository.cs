@@ -5,7 +5,7 @@ namespace Contracts
 {
     public interface ITicketRepository
     {
-        IEnumerable<Ticket> GetAllTickets(string email, bool trackChanges);
+        IEnumerable<Ticket> GetAllTickets(string id, bool trackChanges);
 
         void AddTicket(Ticket newTicket);
     }

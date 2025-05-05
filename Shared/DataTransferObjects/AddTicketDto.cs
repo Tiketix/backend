@@ -1,5 +1,6 @@
 namespace Shared.DataTransferObjects;
 
-public record AddTicketDto(decimal Price, DateTime PurchaseTime, Guid EventId, string Email);
+public record AddTicketDto(decimal Price, DateTime PurchaseTime, 
+                                Guid EventId, string UserId);
 
 

@@ -14,17 +14,18 @@ namespace EventClients.Presentation.Controllers
 
 
         [HttpGet]
-        public IActionResult GetTickets(string email)
+        [Route("user-tickets")]
+        public IActionResult GetTickets(string id)
         {
             try
             {
                 var tickets =
-                _service.TicketService.GetAllTickets(email, trackChanges: false);
+                _service.TicketService.GetAllTickets(id, trackChanges: false);
                 return Ok(tickets);
             }
             catch
             {
-                return StatusCode(500, "Internal server error");
+                return StatusCode(500, "Internal server errorrr");
             }
         }
 

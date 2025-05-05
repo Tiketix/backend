@@ -17,10 +17,11 @@ namespace Repository
         //     .Where(t => t.Email == email)
         //     .ToList();
 
-        public IEnumerable<Ticket> GetAllTickets(string email, bool trackChanges) =>
+        public IEnumerable<Ticket> GetAllTickets(string id, bool trackChanges) =>
             [.. FindAll(trackChanges)
             .Include(t => t.Event) // load associated event
-            .Where(t => t.Email == email)];
+            .Where(t => t.UserId == id)
+            ];
 
         public void AddTicket(Ticket newTicket) => Create(newTicket);
     }

@@ -2,12 +2,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Models
 {
-    public class   Ticket
+    public class Ticket
     {
         [Column("TicketId")]
-        public Guid Id { get; set; }
+        public Guid TicketId { get; set; }
         public decimal Price { get; set; }
         public DateTime PurchaseTime { get; set; }
+
+        public string? EventTitle { get; set; }
 
 
 
@@ -15,10 +17,12 @@ namespace Entities.Models
 
         [ForeignKey("EventId")]
         public Guid EventId { get; set; }
+        
+
 
         //foreign key to user
-        [ForeignKey("Email")]
-        public string? Email { get; set;}
+        [ForeignKey("UserId")]
+        public string? UserId { get; set;}
 
         //navigation properties
         
