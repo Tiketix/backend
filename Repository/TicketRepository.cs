@@ -2,6 +2,7 @@
 using Contracts;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using Shared.DataTransferObjects;
 
 namespace Repository
 {
@@ -14,12 +15,12 @@ namespace Repository
         // public IEnumerable<Ticket> GetAllTickets(string email, bool trackChanges) =>
         //     FindAll(trackChanges)
         //     .Include(t => t.Event) // load associated event
-        //     .Where(t => t.Email == email)
+        //     .Where(t => t.UserId == id)
         //     .ToList();
 
         public IEnumerable<Ticket> GetAllTickets(string id, bool trackChanges) =>
             [.. FindAll(trackChanges)
-            .Include(t => t.Event) // load associated event
+            .Include(t => t.EventDetails)// load associated event
             .Where(t => t.UserId == id)
             ];
 

@@ -21,11 +21,11 @@ namespace Repository
                 modelBuilder.Entity<Event>()
                     .HasOne(e => e.EventCreator)
                     .WithMany(u => u.CreatedEvents)
-                    .HasForeignKey(e => e.Email)
+                    .HasForeignKey(e => e.UserId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 modelBuilder.Entity<Ticket>()
-                    .HasOne(t => t.Event)
+                    .HasOne(t => t.EventDetails)
                     .WithMany(e => e.Tickets)
                     .HasForeignKey(t => t.EventId);
 

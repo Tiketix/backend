@@ -9,7 +9,9 @@ namespace Entities.Models
         public decimal Price { get; set; }
         public DateTime PurchaseTime { get; set; }
 
-        public string? EventTitle { get; set; }
+        public string EventTitle => EventDetails.EventTitle;
+
+
 
 
 
@@ -17,7 +19,9 @@ namespace Entities.Models
 
         [ForeignKey("EventId")]
         public Guid EventId { get; set; }
+
         
+
 
 
         //foreign key to user
@@ -26,7 +30,7 @@ namespace Entities.Models
 
         //navigation properties
         
-        public required virtual Event Event { get; set; }
+        public required virtual Event EventDetails { get; set; }
 
         
         public required virtual User Purchaser { get; set; }

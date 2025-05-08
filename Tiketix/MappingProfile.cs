@@ -23,6 +23,11 @@ public class MappingProfile : Profile
                 .ForMember(c => c.Email,
                     opt => opt.MapFrom(c => c.Email));
 
+        // map specific inherited property
+        CreateMap<Ticket, TicketDto>()
+            .ForCtorParam("eventTitle", opt =>
+                opt.MapFrom(src => src.EventDetails.EventTitle));
+
 
         CreateMap<AddEventDto, Event>();
 
