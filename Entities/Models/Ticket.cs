@@ -10,19 +10,14 @@ namespace Entities.Models
         public DateTime PurchaseTime { get; set; }
 
         public string EventTitle => EventDetails.EventTitle;
+        public string OrganizerEmail => EventDetails.OrganizerEmail;
 
-
-
+        public string? LastName => Purchaser.LastName ;
 
 
         //foreign key to event
-
         [ForeignKey("EventId")]
         public Guid EventId { get; set; }
-
-        
-
-
 
         //foreign key to user
         [ForeignKey("UserId")]
@@ -31,8 +26,6 @@ namespace Entities.Models
         //navigation properties
         
         public required virtual Event EventDetails { get; set; }
-
-        
         public required virtual User Purchaser { get; set; }
     }
 }

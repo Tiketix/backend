@@ -27,6 +27,21 @@ public class MappingProfile : Profile
         CreateMap<Ticket, TicketDto>()
             .ForCtorParam("eventTitle", opt =>
                 opt.MapFrom(src => src.EventDetails.EventTitle));
+        CreateMap<Ticket, TicketDto>()
+            .ForCtorParam("organizerEmail", opt =>
+                opt.MapFrom(src => src.EventDetails.OrganizerEmail));
+
+        CreateMap<Ticket, TicketDto>()
+            .ForCtorParam("lastName", opt =>
+                opt.MapFrom(src => src.Purchaser.LastName));
+
+        // CreateMap<Ticket, TicketDto>()
+        //     .ForCtorParam("firstName", opt =>
+        //         opt.MapFrom(src => src.Purchaser.FirstName));
+
+        // CreateMap<Ticket, TicketDto>()
+        //     .ForCtorParam("lastName", opt =>
+        //         opt.MapFrom(src => src.Purchaser.LastName));
 
 
         CreateMap<AddEventDto, Event>();

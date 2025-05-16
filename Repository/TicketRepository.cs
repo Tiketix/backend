@@ -20,7 +20,7 @@ namespace Repository
 
         public IEnumerable<Ticket> GetAllTickets(string id, bool trackChanges) =>
             [.. FindAll(trackChanges)
-            .Include(t => t.EventDetails)// load associated event
+            .Include(t => t.EventDetails).Include(t => t.Purchaser)// load associated event
             .Where(t => t.UserId == id)
             ];
 
