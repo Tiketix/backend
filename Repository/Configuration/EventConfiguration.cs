@@ -21,6 +21,7 @@ namespace Repository.Configuration
                 TicketsAvailable = 100,
                 EventDate = new DateOnly(2025, 03, 25),
                 EventTime = "7pm",
+                TicketPrice = 10000.00
             },
             new Event
             {
@@ -32,7 +33,8 @@ namespace Repository.Configuration
                 Location = "583 Wall Dr. Gwynn Oak, MD 21207",
                 TicketsAvailable = 100,
                 EventDate = new DateOnly(2025, 03, 02),
-                EventTime = "7pm"
+                EventTime = "7pm",
+                TicketPrice = 10000.00
             }
               
         );

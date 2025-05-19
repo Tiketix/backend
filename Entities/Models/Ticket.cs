@@ -6,22 +6,25 @@ namespace Entities.Models
     {
         [Column("TicketId")]
         public Guid TicketId { get; set; }
-        public decimal Price { get; set; }
         public DateTime PurchaseTime { get; set; }
 
-        public string EventTitle => EventDetails.EventTitle;
-        public string OrganizerEmail => EventDetails.OrganizerEmail;
+        public string? EventTitle => EventDetails?.EventTitle;
+        public string? OrganizerEmail => EventDetails?.OrganizerEmail;
+        public double? TicketPrice => EventDetails?.TicketPrice;
+        public string? LastName => Purchaser?.LastName;
+        public string? FirstName => Purchaser?.FirstName;
 
-        public string? LastName => Purchaser.LastName ;
-
-
-        //foreign key to event
-        [ForeignKey("EventId")]
-        public Guid EventId { get; set; }
 
         //foreign key to user
         [ForeignKey("UserId")]
-        public string? UserId { get; set;}
+        public string? UserId { get; set; }
+
+        //foreign key to event
+        // [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [ForeignKey("EventId")]
+        public Guid EventId { get; set; }
+
+        
 
         //navigation properties
         

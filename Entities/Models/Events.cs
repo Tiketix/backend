@@ -36,6 +36,11 @@ namespace Entities.Models
         [Required(ErrorMessage = "Event Time is a required field.")]
         public required string EventTime { get; set; }
 
+        [Required(ErrorMessage = "How much is a ticket to your event?")]
+        public required double TicketPrice { get; set; }
+
+
+        public string? EventOwner => EventCreator?.UserName;
 
 
         // Foreign key to user who created event.

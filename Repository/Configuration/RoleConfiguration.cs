@@ -1,4 +1,4 @@
-
+//ROLE CONFIGURATION.
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -12,16 +12,16 @@ namespace Repository.Configuration
             builder.HasData(
                 new IdentityRole
                 {
-                Name = "Manager",
-                NormalizedName = "MANAGER"
+                    Name = "Manager",
+                    NormalizedName = "MANAGER"
                 },
                 new IdentityRole
                 {
-                Name = "Administrator",
-                NormalizedName = "ADMINISTRATOR"
+                    Name = "Administrator",
+                    NormalizedName = "ADMINISTRATOR"
                 }
             );
         }
     }
- 
+
 }

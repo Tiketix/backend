@@ -34,7 +34,7 @@ namespace Repository
                     .WithMany(u => u.PurchasedTickets)
                     .HasForeignKey(t => t.UserId);
                 
-                modelBuilder.ApplyConfiguration(new EventConfiguration());
+                // modelBuilder.ApplyConfiguration(new EventConfiguration());
                 modelBuilder.ApplyConfiguration(new RoleConfiguration());
             }
             public DbSet<Event>? Events { get; set; }

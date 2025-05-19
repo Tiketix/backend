@@ -1,5 +1,6 @@
 using Contracts;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
@@ -11,6 +12,7 @@ namespace Repository
 
         public IEnumerable<Event> GetAllEvents(bool trackChanges) =>
             FindAll(trackChanges)
+            .Include(e => e.EventCreator)
             .OrderBy(e => e.EventTitle)
             .ToList();
 
