@@ -1,6 +1,5 @@
 Tiketix/bin/
 Tiketix/obj/
-Tiketix/Migrations/
 .env
 Contracts/bin/
 Contracts/obj/
