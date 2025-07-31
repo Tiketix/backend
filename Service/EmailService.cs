@@ -28,6 +28,9 @@ namespace Service
             _mapper = mapper;
         }
 
+#pragma warning disable CS8604 // Possible null reference argument.
+#pragma warning disable CS8601 // Possible null reference assignment.
+
 
 
         // Generate a 6-digit token
@@ -72,7 +75,6 @@ namespace Service
                 var token = Generate6DigitToken();
 
                 // Create token entity
-                #pragma warning disable CS8601 // Possible null reference assignment.
                 var verificationToken = new EmailVerificationToken
                 {
                     Email = user.Email,
@@ -82,15 +84,14 @@ namespace Service
                 };
 
                 // Save token to database
-                _repository.EmailVerificationToken.AddToken(verificationToken);
-                _repository.Save();
+                await _repository.EmailVerificationToken.AddToken(verificationToken);
+                await _repository.Save();
                 
 
                 // Create confirmation link
                 var confirmationLink = BuildConfirmationLink(user.Id, token);
 
                 // Compose email content
-                    #pragma warning disable CS8604 // Possible null reference argument.
                 // var emailBody = CreateConfirmationEmailBody(user.Email, confirmationLink);
                 var emailBody = CreateConfirmationEmailBody(token, confirmationLink);
 

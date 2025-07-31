@@ -17,9 +17,9 @@ namespace Repository
             .OrderBy(t => t.Id)
             .LastOrDefault();
 
-        public void AddToken(EmailVerificationToken token) => Create(token);
+        public async Task AddToken(EmailVerificationToken token) => await Create(token);
 
-        public void RemoveToken(EmailVerificationToken token) => Delete(token);
+        public async Task RemoveToken(EmailVerificationToken token) => await Delete(token);
     }
 }
 

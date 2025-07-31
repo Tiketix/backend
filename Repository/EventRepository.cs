@@ -10,32 +10,32 @@ namespace Repository
         {
         }
 
-        public IEnumerable<Event> GetAllEvents(bool trackChanges) =>
-            FindAll(trackChanges)
+        public async Task<IEnumerable<Event>> GetAllEvents(bool trackChanges) =>
+            await FindAll(trackChanges)
             .Include(e => e.EventCreator)
             .OrderBy(e => e.EventTitle)
-            .ToList();
+            .ToListAsync();
 
-        public IEnumerable<Event> GetEventsByTime(string time, bool trackChanges) =>
-            FindByCondition(e => e.EventTime == time, trackChanges)
+        public async Task<IEnumerable<Event>> GetEventsByTime(string time, bool trackChanges) =>
+            await FindByCondition(e => e.EventTime == time, trackChanges)
             .Include(e => e.EventCreator)
             .OrderBy(e => e.EventTitle)
-            .ToList();
+            .ToListAsync();
 
 
         #pragma warning disable CS8603 // Possible null reference return.
-        public Event GetEventByTitle(string title, bool trackChanges) =>
-            FindByCondition(e => e.EventTitle == title, trackChanges)
+        public async Task<Event> GetEventByTitle(string title, bool trackChanges) =>
+            await FindByCondition(e => e.EventTitle == title, trackChanges)
             .Include(e => e.EventCreator)
-            .SingleOrDefault();
+            .SingleOrDefaultAsync();
 
-        public Event GetEventById(Guid id, bool trackChanges) =>
-            FindByCondition(e => e.Id == id, trackChanges)
-            .SingleOrDefault();
+        public async Task<Event> GetEventById(Guid id, bool trackChanges) =>
+            await FindByCondition(e => e.Id == id, trackChanges)
+            .SingleOrDefaultAsync();
 
-        public void AddEvent(Event newEvent) => Create(newEvent);
+        public async Task AddEvent(Event newEvent) => await Create(newEvent);
 
-        public void DeleteEvent(Event eventName) => Delete(eventName);
+        public async Task DeleteEvent(Event eventName) => await Delete(eventName);
 
     } 
 

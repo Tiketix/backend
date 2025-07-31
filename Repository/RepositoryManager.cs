@@ -21,5 +21,5 @@ public sealed class RepositoryManager : IRepositoryManager
     public IEventRepository Event => _eventRepository.Value;
     public ITicketRepository Ticket => _ticketRepository.Value;
     public IEmailVerificationTokenRepository EmailVerificationToken => _emailVerificationTokenRepository.Value;
-    public void Save() => _repositoryContext.SaveChanges();
+    public async Task Save() => await _repositoryContext.SaveChangesAsync();
 }

@@ -1,3 +1,4 @@
+using Entities.Response;
 using Microsoft.AspNetCore.Identity;
 using Shared.DataTransferObjects;
 
@@ -5,21 +6,21 @@ namespace Service.Contracts
 {
     public interface IAuthService 
     {
-        Task<IdentityResult> RegisterUser(RegistrationDto registration);
+        Task<ApiResponse<LoginDto>> RegisterClient(RegistrationDto registration);
 
-        Task<IdentityResult> RegisterAdmin(AdminRegistrationDto registration);
-
-        Task<IdentityResult> UpdateUserEmail(string email, string password, string newEmail);
-
-        Task<IdentityResult> UpdateUserPhone(string email, string password, string newPhoneNumber);
-
+        Task<ApiResponse<LoginDto>> RegisterAdmin(AdminRegistrationDto registration);
+        Task<ApiResponse<LoginDto>> RegisterEventOrganizer(RegistrationDto registration);
+        Task<ApiResponse<LoginDto>> UpdateUserDetails(LoginDto request, Guid id);
+        Task<ApiResponse<string>> RequestPasswordReset(PasswordResetDto request);
+        Task<ApiResponse<string>> ResetPassword(PasswordReset request);
+        Task<ApiResponse<bool>> ValidateToken(string email, string token);
         Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword);
 
         Task<IdentityResult> DeleteUser(string email, string password);
 
         Task<IdentityResult> DeleteUnregisteredUser(string email);
 
-        Task<(bool, LoginDto UserData)> ValidateUser(AuthDto authDto);
+        Task<ApiResponse<LoginDto>> UserLogin(AuthDto authDto);
 
         Task<string> CreateToken();
 

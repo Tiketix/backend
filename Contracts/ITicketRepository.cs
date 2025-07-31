@@ -7,7 +7,7 @@ namespace Contracts
     {
         IEnumerable<Ticket> GetAllTickets(string id, bool trackChanges);
 
-        void AddTicket(Ticket newTicket);
+        Task AddTicket(Ticket newTicket);
     }
 }
 

@@ -1,3 +1,4 @@
+using Entities.Response;
 using Microsoft.AspNetCore.Mvc;
 using Service.Contracts;
 using Shared.DataTransferObjects;
@@ -13,90 +14,75 @@ namespace EventClients.Presentation.Controllers
         public EventsController(IServiceManager service) => _service = service;
 
 
-        [HttpGet]
-        public IActionResult GetEvents()
-        {
-            try
-            {
-                var events = 
-                _service.EventService.GetAllEvents(trackChanges: false);
-                return Ok(events);
-            }
-            catch
-            {
-                return StatusCode(500, "Internal server error");
-            }
+        [HttpGet("getEvents")]
+        public async Task<IActionResult> GetEvents()
+        { 
+            var response = await _service.EventService.GetAllEvents(trackChanges: false);
+            
+            if (!response.Success)
+                return NotFound(response);
+            return Ok(response);
         }
 
         [HttpGet]
-        [Route("events-by-time")]
-        public IActionResult GetEventsByTime(string time)
+        [Route("eventsByTime")]
+        public async Task<IActionResult> GetEventsByTime(string time)
         {
-            try
-            {
-                var events = 
-                _service.EventService.GetEventsByTime(time, trackChanges: false);
-                return Ok(events);
-            }
-            catch
-            {
-                return StatusCode(500, "Internal server error");
-            }
+            var response = await _service.EventService.GetEventsByTime(time, trackChanges: false);
+            if (!response.Success)
+                return NotFound(response);
+            return Ok(response);
         }
 
-        [HttpGet]
-        [Route("events-by-title")]
-
-        public IActionResult GetEventByTitle(string title)
+        [HttpGet("eventsByTitle")]
+        public async Task<IActionResult> GetEventByTitle(string title)
         {
-            try
-            {
-                var eventResult = _service.EventService.GetEventByTitle(title, trackChanges: false);
-
-                if (eventResult is null)
-                {
-                    return NotFound("Event does not exist on this website!!");
-                }
-                return Ok(eventResult);
-            }
-            catch
-            {
-                return StatusCode(500, "Something is wrong somewhere.");
-            }
+            var response = await _service.EventService.GetEventByTitle(title, trackChanges: false);
+            if (!response.Success)
+                return NotFound(response);
+            return Ok(response);
         }
 
         [HttpPost]
         [Route("add-event")]
-
-        public IActionResult AddEvent([FromBody] AddEventDto newEvent)
+        public async Task<IActionResult> AddEvent([FromBody] AddEventDto newEvent)
         {
-            if (newEvent is null)
-                    return BadRequest("AddEventDto object is null");
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                return BadRequest(ApiResponse<string>.FailureResponse(errors, "Invalid request data!"));
+            }
+            try
+            {
+                var response = await _service.EventService.AddEvent(newEvent);
+                if (!response.Success)
+                    return BadRequest(response);
 
-            var addNewEvent = _service.EventService.AddEvent(newEvent);
+                return Ok(response);
 
-            return Ok(addNewEvent);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
-        [HttpPut]
-        [Route("update-event-details")]
-
-        public IActionResult UpdateEventDetails(string title, [FromBody] UpdateEventDetailsDto newEventDetails)
+        [HttpPut("updateEventDetails")]
+        public async Task<IActionResult> UpdateEventDetails(Guid id, [FromBody] UpdateEventDetailsDto newEventDetails)
         {
-            if (newEventDetails is null)
-                    return BadRequest("UpdateEventDetailsDto object is null");
+            var response = await _service.EventService.UpdateEventDetails(id, newEventDetails, trackChanges: true);
+            if (!response.Success)
+                return BadRequest(response);
 
-            _service.EventService.UpdateEventDetails(title, newEventDetails, trackChanges: true);
-
-            return Ok(newEventDetails);
-
+            return Ok(response);
         }
 
-        [HttpDelete]
-        [Route("delete-event")]
-        public IActionResult DeleteEvent(Guid id)
+        [HttpDelete("deleteEvent")]
+        public async Task<IActionResult> DeleteEvent(Guid id)
         {
-            _service.EventService.DeleteEvent(id, trackchanges: false);
+            var response = await _service.EventService.DeleteEvent(id, trackChanges: false);
+            if (!response.Success)
+                return BadRequest(response);
 
             return Ok("Event Deleted successfully");
         }

@@ -14,6 +14,8 @@ builder.Services.ConfigureRepositoryManager();
 
 builder.Services.ConfigureServiceManager();
 
+// builder.Services.ConfigureSqlContext(); //mySQL
+
 builder.Services.ConfigureSqlContext();
 
 builder.Services.AddAuthentication();

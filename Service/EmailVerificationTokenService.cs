@@ -25,7 +25,7 @@ namespace Service
             return tokenDto;
         }
 
-        
+
 
         public EmailVerificationTokenDto AddToken(AddEmailVerificationTokenDto token)
         {
@@ -36,6 +36,17 @@ namespace Service
 
             var returnToken = _mapper.Map<EmailVerificationTokenDto>(addToken);
             return returnToken;
+        }
+        
+        public EmailVerificationTokenDto RemoveToken(string email, bool trackChanges)
+        {
+            var token = _repository.EmailVerificationToken.GetToken(email, trackChanges);
+
+            _repository.EmailVerificationToken.RemoveToken(token);
+            _repository.Save();
+
+            var tokenDto = _mapper.Map<EmailVerificationTokenDto>(token);
+            return tokenDto;
         }
     }
 

@@ -5,19 +5,20 @@ namespace Shared.DataTransferObjects
     public record RegistrationDto
     {
         [Required(ErrorMessage = "FirstName is required")]
-        public string? FirstName { get; init; }
+        public required string FirstName { get; init; }
 
         [Required(ErrorMessage = "LastName is required")]
-        public string? LastName { get; init; }
+        public required string LastName { get; init; }
 
         [Required(ErrorMessage = "Username is required")]
-        public string? Username { get; init; }
-        
+        public required string Username { get; init; }
+
         [Required(ErrorMessage = "Email is required")]
-        public string? Email { get; init; }
+        public required string Email { get; init; }
 
         [Required(ErrorMessage = "Password is required")]
-        public string? Password { get; init; }
+        public required string Password { get; init; }
         public string? PhoneNumber { get; init; }
+        public ICollection<string> Roles { get; set; } = new List<string>();
     }
 }

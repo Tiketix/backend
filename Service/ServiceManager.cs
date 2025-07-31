@@ -17,7 +17,7 @@ namespace Service
         private readonly Lazy<IEmailVerificationTokenService> _emailVerificationTokenService;
 
         public ServiceManager(IRepositoryManager repositoryManager, IMapper mapper,
-                                UserManager<User> userManager, IConfiguration configuration)
+                                UserManager<User> userManager, IConfiguration configuration, IEmailService emailService)
         {
             _clientService = new Lazy<IClientService>(() => new 
             ClientService(userManager, mapper));
@@ -26,7 +26,7 @@ namespace Service
             _ticketService = new Lazy<ITicketService>(() => new
             TicketService(repositoryManager, mapper));
             _authService = new Lazy<IAuthService>(() =>new 
-            AuthService(mapper, userManager, configuration, repositoryManager));
+            AuthService(mapper, userManager, configuration, repositoryManager, emailService));
             _emailService = new Lazy<IEmailService>(() =>new 
             EmailService(userManager, repositoryManager, configuration, mapper));
             _emailVerificationTokenService = new Lazy<IEmailVerificationTokenService>(() =>new

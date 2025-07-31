@@ -18,7 +18,8 @@ public class MappingProfile : Profile
 
         CreateMap<User, LoginDto>()
                 .ForMember(c => c.Email,
-                    opt => opt.MapFrom(c => c.Email));
+                    opt => opt.MapFrom(c => c.Email))
+                    .ReverseMap();
         CreateMap<EmailVerificationToken, EmailVerificationTokenDto>()
                 .ForMember(c => c.Email,
                     opt => opt.MapFrom(c => c.Email));

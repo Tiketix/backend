@@ -19,6 +19,16 @@ namespace Repository.Configuration
                 {
                     Name = "Administrator",
                     NormalizedName = "ADMINISTRATOR"
+                },
+                new IdentityRole
+                {
+                    Name = "EventOrganizer",
+                    NormalizedName = "EVENTORGANIZER"
+                },
+                new IdentityRole
+                {
+                    Name = "Client",
+                    NormalizedName = "CLIENT"
                 }
             );
         }

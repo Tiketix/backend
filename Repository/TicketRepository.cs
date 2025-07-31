@@ -24,7 +24,7 @@ namespace Repository
             .Where(t => t.UserId == id)
             ];
 
-        public void AddTicket(Ticket newTicket) => Create(newTicket);
+        public async Task AddTicket(Ticket newTicket) => await Create(newTicket);
     }
 }
 

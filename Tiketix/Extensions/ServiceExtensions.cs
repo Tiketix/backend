@@ -36,17 +36,24 @@ namespace tiketix.Extensions
         public static void ConfigureRepositoryManager(this IServiceCollection services) =>
                                 services.AddScoped<IRepositoryManager, RepositoryManager>();
 
-        public static void ConfigureServiceManager(this IServiceCollection services) =>
-                                services.AddScoped<IServiceManager, ServiceManager>();
+        public static void ConfigureServiceManager(this IServiceCollection services)
+        {
+            services.AddScoped<IServiceManager, ServiceManager>();
+            services.AddScoped<IEmailService, EmailService>();
 
-        // public static void ConfigureSqlContext(this IServiceCollection services) =>
-        //                         services.AddDbContext<RepositoryContext>(opts =>
-        //                         opts.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")));
+        }
+                               
 
+        //SQL SERVER
         public static void ConfigureSqlContext(this IServiceCollection services) =>
                                 services.AddDbContext<RepositoryContext>(opts =>
-                                opts.UseMySql(Environment.GetEnvironmentVariable("DefaultConnection2"),
-                                ServerVersion.AutoDetect(Environment.GetEnvironmentVariable("DefaultConnection2"))));
+                                opts.UseSqlServer(Environment.GetEnvironmentVariable("DefaultConnection")));
+
+        //MYSQL
+        // public static void ConfigureSqlContext(this IServiceCollection services) =>
+        //                         services.AddDbContext<RepositoryContext>(opts =>
+        //                         opts.UseMySql(Environment.GetEnvironmentVariable("DefaultConnection2"),
+        //                         ServerVersion.AutoDetect(Environment.GetEnvironmentVariable("DefaultConnection2"))));
 
         public static void ConfigureRateLimitingOptions(this IServiceCollection services)
         {
@@ -58,9 +65,12 @@ namespace tiketix.Extensions
                 Period = "5m"
                 }
             };
-            services.Configure<IpRateLimitOptions>(opt => { opt.GeneralRules = 
-            rateLimitRules; });
-            services.AddSingleton<IRateLimitCounterStore, 
+            services.Configure<IpRateLimitOptions>(opt =>
+            {
+                opt.GeneralRules =
+            rateLimitRules;
+            });
+            services.AddSingleton<IRateLimitCounterStore,
             MemoryCacheRateLimitCounterStore>();
             services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
