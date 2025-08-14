@@ -14,7 +14,11 @@ public class MappingProfile : Profile
 
         CreateMap<Ticket, TicketDto>()
                 .ForMember(c => c.UserId,
-                    opt => opt.MapFrom(c => c.UserId));
+                    opt => opt.MapFrom(c => c.UserId))
+                    // .ForMember(c => c.NoOfTicketsOrdered,
+                    // opt => opt.MapFrom(c => c.EventTicketOrdered))
+                    .ReverseMap();
+
 
         CreateMap<User, LoginDto>()
                 .ForMember(c => c.Email,
@@ -42,9 +46,9 @@ public class MappingProfile : Profile
         //     .ForCtorParam("lastName", opt =>
         //         opt.MapFrom(src => src.Purchaser.LastName));
 
-        
 
- 
+
+
 
 
         CreateMap<AddEventDto, Event>();
@@ -57,7 +61,10 @@ public class MappingProfile : Profile
 
         CreateMap<AddEmailVerificationTokenDto, EmailVerificationToken>();
 
-        CreateMap<AddTicketDto, Ticket>();
+        CreateMap<AddTicketDto, Ticket>().ReverseMap();
+
+        // CreateMap<GetTicketRequest, TicketDto>()
+        //                         .ForMember(t => t.NoOfTicketsOrdered, opt => opt.MapFrom(t => t.NoOfTicketsOrdered)).ReverseMap();
 
     }
 }

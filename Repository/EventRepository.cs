@@ -33,6 +33,8 @@ namespace Repository
             await FindByCondition(e => e.Id == id, trackChanges)
             .SingleOrDefaultAsync();
 
+        public async Task UpdateEvent(Event eventDetails) => await Update(eventDetails);
+
         public async Task AddEvent(Event newEvent) => await Create(newEvent);
 
         public async Task DeleteEvent(Event eventName) => await Delete(eventName);

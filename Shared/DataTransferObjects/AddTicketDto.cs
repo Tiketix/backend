@@ -1,6 +1,13 @@
-namespace Shared.DataTransferObjects;
+namespace Shared.DataTransferObjects
+{
+    public class AddTicketDto
+    {
+        public DateTime PurchaseTime { get; set; }
+        public Guid EventId { get; set; }
+        public required string UserId { get; set; }
+        public required int NoOfTickets { get; set; }
 
-public record AddTicketDto(DateTime PurchaseTime,
-                                Guid EventId, string UserId);
+    }
+}
 
 

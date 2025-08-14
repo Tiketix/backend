@@ -40,7 +40,7 @@ namespace tiketix.Extensions
         {
             services.AddScoped<IServiceManager, ServiceManager>();
             services.AddScoped<IEmailService, EmailService>();
-
+            services.AddScoped<IClientService, ClientService>();
         }
                                
 

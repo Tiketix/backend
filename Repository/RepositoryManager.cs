@@ -1,4 +1,5 @@
 using Contracts;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Repository;
 
@@ -22,4 +23,9 @@ public sealed class RepositoryManager : IRepositoryManager
     public ITicketRepository Ticket => _ticketRepository.Value;
     public IEmailVerificationTokenRepository EmailVerificationToken => _emailVerificationTokenRepository.Value;
     public async Task Save() => await _repositoryContext.SaveChangesAsync();
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync()
+    {
+        return await _repositoryContext.Database.BeginTransactionAsync();
+    }
 }

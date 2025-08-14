@@ -5,9 +5,9 @@ namespace Contracts
 {
     public interface ITicketRepository
     {
-        IEnumerable<Ticket> GetAllTickets(string id, bool trackChanges);
-
+        Task<IEnumerable<Ticket>> GetAllUserTickets(string id, bool trackChanges);
         Task AddTicket(Ticket newTicket);
+        Task AddRange(IEnumerable<Ticket> tickets);
     }
 }
 

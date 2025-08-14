@@ -2,7 +2,7 @@ namespace Shared.DataTransferObjects
 {
     public class LoginDto
     {
-   
+        public required string Id { get; set; }
         public string? FirstName { get; set; }
 
         public string? LastName { get; set; }

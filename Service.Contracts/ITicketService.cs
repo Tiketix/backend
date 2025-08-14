@@ -1,10 +1,10 @@
+using Entities.Response;
 using Shared.DataTransferObjects;
 
 namespace Service.Contracts;
 
 public interface ITicketService
 {
-    IEnumerable<TicketDto> GetAllTickets(string id, bool trackChanges);
-
-    TicketDto AddTicket(AddTicketDto newTicket);
+    Task<ApiResponse<UserTicketsDto>> GetAllUserTickets(GetTicketRequest request, bool trackChanges);
+    Task<ApiResponse<IEnumerable<TicketDto>>> AddTicket(AddTicketDto newTicket);
 }

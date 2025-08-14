@@ -15,41 +15,46 @@ namespace EventClients.Presentation.Controllers
         
         
         [HttpGet]
-        [Route("all-users")]
+        [Route("allUsers")]
         public async Task<IActionResult> GetAllUsers() 
         {
-            try
-            {
-                var clients = await _service.ClientService.GetAllUsers();
-                return Ok(clients);
-            }
-            catch
-            {
-                return StatusCode(500, "Something Went Wrong");
-            }
+            var response = await _service.ClientService.GetAllUsers();
+            
+            if (!response.Success)
+                return NotFound(response);
+            return Ok(response);
         }
 
         [HttpGet]
-        [Route("user-by-email")]
-
+        [Route("getUserByEmail")]
         public async Task<IActionResult> GetUserByEmail(string email)
         {
-            var user = await _service.ClientService.GetUserByEmail(email);
+            var response = await _service.ClientService.GetUserByEmail(email);
 
-            if (user is null)
-            {
-                return NotFound("User does not exist!!");
-            }
-            return Ok(user);
-            
+            if (!response.Success)
+                return NotFound(response);
+            return Ok(response);
         }
 
-        [HttpDelete("admin-delete-user")]
+        [HttpGet]
+        [Route("getUserById")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            var response = await _service.ClientService.GetUserById(id);
+
+            if (!response.Success)
+                return NotFound(response);
+            return Ok(response);
+        }
+
+        [HttpDelete("deleteUser")]
         public async Task<IActionResult> AdminDeleteUser(string email)
         {
-            await _service.ClientService.AdminDeleteUser(email);
+            var response = await _service.ClientService.AdminDeleteUser(email);
 
-            return Ok("Account Deleted successfully");
+            if (!response.Success)
+                return NotFound(response);
+            return Ok(response);
         }
 
 

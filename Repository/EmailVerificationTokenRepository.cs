@@ -1,6 +1,7 @@
 
 using Contracts;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
@@ -12,10 +13,10 @@ namespace Repository
         }
 
         #pragma warning disable CS8603 // Possible null reference return.
-        public EmailVerificationToken GetToken(string email, bool trackChanges) =>
-            FindByCondition(t => t.Email.Equals(email), trackChanges)
+        public async Task<EmailVerificationToken> GetToken(string email, bool trackChanges) =>
+            await FindByCondition(t => t.Email.Equals(email), trackChanges)
             .OrderBy(t => t.Id)
-            .LastOrDefault();
+            .LastOrDefaultAsync();
 
         public async Task AddToken(EmailVerificationToken token) => await Create(token);
 

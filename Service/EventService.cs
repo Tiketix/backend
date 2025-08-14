@@ -120,6 +120,7 @@ internal sealed class EventService : IEventService
 
 
         _mapper.Map(updateEventDetails, eventExists);
+        await _repository.Event.UpdateEvent(eventExists);
         await _repository.Save();
 
         var updatedEvent = _mapper.Map<EventDto>(eventExists);

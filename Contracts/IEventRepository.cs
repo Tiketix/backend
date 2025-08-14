@@ -10,7 +10,7 @@ namespace Contracts
 
         Task<Event> GetEventByTitle(string title, bool trackChanges);
         Task<Event> GetEventById(Guid id, bool trackChanges);
-
+        Task UpdateEvent(Event eventDetails);
         Task AddEvent(Event newEvent);
 
         Task DeleteEvent(Event eventName);

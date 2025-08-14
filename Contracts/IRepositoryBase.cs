@@ -8,6 +8,7 @@ namespace Contracts
         IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, 
         bool trackChanges);
         Task Create(T entity);
+        Task AddRange(IEnumerable<T> entities);
         Task Update(T entity);
         Task Delete(T entity);
     }
