@@ -17,9 +17,9 @@ namespace Service
             _mapper = mapper;
         }
 
-        public EmailVerificationTokenDto GetToken(string email, bool trackChanges)
+        public async Task<EmailVerificationTokenDto> GetToken(string email, bool trackChanges)
         {
-            var token = _repository.EmailVerificationToken.GetToken(email, trackChanges);
+            var token = await _repository.EmailVerificationToken.GetToken(email, trackChanges);
 
             var tokenDto = _mapper.Map<EmailVerificationTokenDto>(token);
             return tokenDto;
@@ -27,26 +27,25 @@ namespace Service
 
 
 
-        public EmailVerificationTokenDto AddToken(AddEmailVerificationTokenDto token)
+        public async Task<EmailVerificationTokenDto> AddToken(AddEmailVerificationTokenDto token)
         {
             var addToken = _mapper.Map<EmailVerificationToken>(token);
 
-            _repository.EmailVerificationToken.AddToken(addToken);
-            _repository.Save();
+            await _repository.EmailVerificationToken.AddToken(addToken);
+            await _repository.Save();
 
             var returnToken = _mapper.Map<EmailVerificationTokenDto>(addToken);
             return returnToken;
         }
         
-        public EmailVerificationTokenDto RemoveToken(string email, bool trackChanges)
+        public async Task<bool> RemoveToken(string email, bool trackChanges)
         {
-            var token = _repository.EmailVerificationToken.GetToken(email, trackChanges);
+            var token = await _repository.EmailVerificationToken.GetToken(email, trackChanges);
 
-            _repository.EmailVerificationToken.RemoveToken(token);
-            _repository.Save();
+            await _repository.EmailVerificationToken.RemoveToken(token);
+            await _repository.Save();
 
-            var tokenDto = _mapper.Map<EmailVerificationTokenDto>(token);
-            return tokenDto;
+            return true;
         }
     }
 

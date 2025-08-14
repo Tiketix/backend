@@ -20,6 +20,8 @@ public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
 
     public async Task Create(T entity) => await RepositoryContext.Set<T>().AddAsync(entity);
 
+    public async Task AddRange(IEnumerable<T> entities) => await RepositoryContext.Set<T>().AddRangeAsync(entities);
+
     public async Task Update(T entity) => await Task.Run(() => RepositoryContext.Set<T>().Update(entity));
 
     public async Task Delete(T entity) => await Task.Run(() => RepositoryContext.Set<T>().Remove(entity));

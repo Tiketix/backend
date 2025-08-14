@@ -11,20 +11,20 @@ namespace Service.Contracts
         Task<ApiResponse<LoginDto>> RegisterAdmin(AdminRegistrationDto registration);
         Task<ApiResponse<LoginDto>> RegisterEventOrganizer(RegistrationDto registration);
         Task<ApiResponse<LoginDto>> UpdateUserDetails(LoginDto request, Guid id);
-        Task<ApiResponse<string>> RequestPasswordReset(PasswordResetDto request);
+        Task<ApiResponse<string>> RequestPasswordReset(RequestPasswordResetDto request);
         Task<ApiResponse<string>> ResetPassword(PasswordReset request);
         Task<ApiResponse<bool>> ValidateToken(string email, string token);
-        Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword);
+        Task<ApiResponse<bool>> UpdateUserPassword(UpdateUserPasswordDto dto);
+        // Task<ApiResponse<LoginDto>> DeleteUser(string email, string password);
 
-        Task<IdentityResult> DeleteUser(string email, string password);
-
-        Task<IdentityResult> DeleteUnregisteredUser(string email);
+        // Task<ApiResponse<LoginDto>> DeleteUser(string email);
 
         Task<ApiResponse<LoginDto>> UserLogin(AuthDto authDto);
+        Task<ApiResponse<bool>> SendToken(string email);
 
         Task<string> CreateToken();
 
-        Task<IdentityResult> ConfirmEmail(string userId, string token);
+        // Task<IdentityResult> ConfirmEmail(string userId, string token);
     }
 }
 

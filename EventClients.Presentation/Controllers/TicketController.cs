@@ -14,32 +14,27 @@ namespace EventClients.Presentation.Controllers
 
 
         [HttpGet]
-        [Route("user-tickets")]
-        public IActionResult GetTickets(string id)
+        [Route("userTickets")]
+        public async Task<IActionResult> GetTickets([FromQuery] GetTicketRequest request)
         {
-            try
-            {
-                var tickets =
-                _service.TicketService.GetAllTickets(id, trackChanges: false);
-                return Ok(tickets);
-            }
-            catch
-            {
-                return StatusCode(500, "Internal server errorrr");
-            }
+            var response = await _service.TicketService.GetAllUserTickets(request, trackChanges: false);
+            if (!response.Success)
+                return BadRequest(response);
+
+            return Ok(response);  
         }
 
         [HttpPost]
-        [Route("add-ticket")]
+        [Route("addTicket")]
 
-        public IActionResult AddTicket([FromBody] AddTicketDto newTicket)
+        public async Task<IActionResult> AddTicket([FromBody] AddTicketDto newTicket)
         {
-            if (newTicket is null)
-                return BadRequest("AddTicketDto object is null");
+            var response = await _service.TicketService.AddTicket(newTicket);
+            if (!response.Success)
+                return BadRequest(response);
 
-            var addNewTicket = _service.TicketService.AddTicket(newTicket);
+            return Ok(response); 
 
-            return Ok(addNewTicket);
         }
 
     }

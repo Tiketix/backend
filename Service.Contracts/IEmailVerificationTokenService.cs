@@ -5,8 +5,8 @@ namespace Service.Contracts
 {
     public interface IEmailVerificationTokenService
     {
-        EmailVerificationTokenDto GetToken(string email, bool trackChanges);
-        EmailVerificationTokenDto AddToken(AddEmailVerificationTokenDto token);
+        Task<EmailVerificationTokenDto> GetToken(string email, bool trackChanges);
+        Task<EmailVerificationTokenDto> AddToken(AddEmailVerificationTokenDto token);
     }
 
 }

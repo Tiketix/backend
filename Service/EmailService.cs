@@ -40,39 +40,54 @@ namespace Service
             return random.Next(100000, 999999).ToString();
         }
 
-        // public string GenerateEmailConfirmationTokenAsync(string email)
-        // {
-        //     // Generate 6-digit token
-        //     string token = Generate6DigitToken();
-
-        //     // Create token entity
-        //     var verificationToken = new EmailVerificationToken
-        //     {
-        //         Email = email,
-        //         Token = token,
-        //         ExpiryTime = DateTime.UtcNow.AddHours(1),
-        //         IsUsed = false
-        //     };
-
-        //     // Save token to database
-        //     _repository.EmailVerificationToken.AddToken(verificationToken);
-        //     _repository.Save();
-
-        //     return token;
-        // }
-
         public async Task<bool> SendConfirmationEmailAsync(User user)
         {
             try 
             {
-                // // Generate email confirmation token
-                // var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                
-
-                // // Encode the token to be URL-safe
-                // token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-                
                 var token = Generate6DigitToken();
+
+                // Create token entity
+                var verificationToken = new EmailVerificationToken
+                {
+                    Email = user.Email,
+                    Token = token,
+                    ExpiryTime = DateTime.UtcNow.AddMinutes(15),
+                    IsUsed = false
+                };
+
+                // Save token to database
+                await _repository.EmailVerificationToken.AddToken(verificationToken);
+                await _repository.Save();
+                
+                // Create confirmation link
+                var confirmationLink = BuildConfirmationLink(user.Id, token);
+
+                // Compose email content
+                var emailBody = CreateConfirmationEmailBody(token, confirmationLink);
+
+                // Send email using Gmail SMTP
+                await SendEmailWithGmailSmtp(
+                    to: user.Email, 
+                    subject: "Confirm Your Email", 
+                    body: emailBody
+                );
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                Console.WriteLine($"Email sending failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> SendResetPasswordEmailAsync(User user)
+        {
+            try 
+            {
+                // Generate password reset token            
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
                 // Create token entity
                 var verificationToken = new EmailVerificationToken
@@ -92,8 +107,7 @@ namespace Service
                 var confirmationLink = BuildConfirmationLink(user.Id, token);
 
                 // Compose email content
-                // var emailBody = CreateConfirmationEmailBody(user.Email, confirmationLink);
-                var emailBody = CreateConfirmationEmailBody(token, confirmationLink);
+                var emailBody = CreateResetPasswordEmailBody(confirmationLink);
 
                 // Send email using Gmail SMTP
                 await SendEmailWithGmailSmtp(
@@ -134,6 +148,27 @@ namespace Service
             </body>
             </html>";
         }
+
+        private string CreateResetPasswordEmailBody(string confirmationLink)
+        {
+             return $@"
+            <html>
+            <body style='font-family: Arial, sans-serif;'>
+                <h2>Tiketix Password Reset</h2>
+                <p>Hello,</p>
+                <p>You requested a password reset. Please click the button below to reset your password:</p>
+                <p>
+                    <a href='{confirmationLink}' target='_blank' 
+                    style='display: inline-block; padding: 10px 20px; font-size: 16px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;'>
+                        Reset Password
+                    </a>
+                </p>
+                <p>This link will expire in 15 minutes.</p>
+                <p>Best regards,<br>Tiketix</p>
+            </body>
+            </html>";
+        }
+
 
         private async Task SendEmailWithGmailSmtp(string to, string subject, string body)
         {

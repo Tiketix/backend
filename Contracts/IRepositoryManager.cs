@@ -1,9 +1,14 @@
+using Microsoft.EntityFrameworkCore.Storage;
+
 namespace Contracts;
 
 public interface IRepositoryManager
 {
-    IEventRepository Event{ get; }
+    IEventRepository Event { get; }
     ITicketRepository Ticket { get; }
-    IEmailVerificationTokenRepository EmailVerificationToken{ get; }
+    IEmailVerificationTokenRepository EmailVerificationToken { get; }
     Task Save();
+
+    // Add transaction methods
+    Task<IDbContextTransaction> BeginTransactionAsync();
 }

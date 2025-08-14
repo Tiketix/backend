@@ -8,6 +8,7 @@ namespace Entities.Models
         public Guid TicketId { get; set; }
         public DateTime PurchaseTime { get; set; }
 
+        public int? TicketsAvailable => EventDetails?.TicketsAvailable;
         public string? EventTitle => EventDetails?.EventTitle;
         public string? OrganizerEmail => EventDetails?.OrganizerEmail;
         public double? TicketPrice => EventDetails?.TicketPrice;

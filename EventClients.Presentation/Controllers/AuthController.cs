@@ -19,9 +19,9 @@ namespace EventClients.Presentation.Controllers
             var result = await _service.AuthService.RegisterClient(registration);
             if (!result.Success)
                 return BadRequest(result);
-                
+
             return Ok(result);
-            
+
         }
 
         [HttpPost("registerAdminUser")]
@@ -41,12 +41,12 @@ namespace EventClients.Presentation.Controllers
             var result = await _service.AuthService.RegisterEventOrganizer(registration);
             if (!result.Success)
                 return BadRequest(result);
-                
+
             return Ok(result);
-            
+
         }
-        
-        
+
+
         [HttpPost("adminLogin")]
 
         public async Task<IActionResult> ValidateAdmin([FromBody] AuthDto authDto)
@@ -90,54 +90,64 @@ namespace EventClients.Presentation.Controllers
         }
 
         [HttpPut("changePassword")]
-        public async Task<IActionResult> UpdatePassword([FromBody] UpdateUserPasswordDto updateuserPasswordDto)
+        public async Task<IActionResult> UpdatePassword([FromBody] UpdateUserPasswordDto dto)
         {
-            var result = await _service.AuthService.UpdateUserPassword(
-                updateuserPasswordDto.Email,
-                updateuserPasswordDto.CurrentPassword,
-                updateuserPasswordDto.NewPassword);
-                
-            if (result.Succeeded)
-                return Ok($"Password Changed Successfully. Your new password is {updateuserPasswordDto.NewPassword}");
-                
-            return BadRequest(result.Errors);
+            var response = await _service.AuthService.UpdateUserPassword(dto);
+            if (!response.Success)
+                return BadRequest(response);
+
+            return Ok(response);
         }
 
-        [HttpDelete("delete-user")]
-        public async Task<IActionResult> DeleteUser(string email, string password)
+        [HttpPost("requestPasswordReset")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] RequestPasswordResetDto request)
         {
-            await _service.AuthService.DeleteUser(email, password);
+            var response = await _service.AuthService.RequestPasswordReset(request);
+            if (!response.Success)
+                return BadRequest(response);
 
-            return Ok("Account Deleted successfully");
+            return Ok(response);
         }
 
-        [HttpPost("send-confirmation-email")]
-        public async Task<IActionResult> SendToken([FromBody] AuthDto authDto)
+        [HttpPost("resetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] PasswordReset request)
         {
-            var user = new User
-            {
-                Email = authDto.Email,
-            }; 
+            var response = await _service.AuthService.ResetPassword(request);
+            if (!response.Success)
+                return BadRequest(response);
 
-            await _service.AuthService.UserLogin(authDto);
-            if (false)
-                throw new Exception("incorrect credentials!!");
-
-            await _service.EmailService.SendConfirmationEmailAsync(user);
-            return Ok(new { 
-                    message = "Please check your email to confirm your account." 
-                });
+            return Ok(response);
         }
 
-        [HttpGet("confirm-email")]
+        // [HttpDelete("deleteUser")]
+        // public async Task<IActionResult> DeleteUser(string email)
+        // {
+        //     var response = await _service.AuthService.DeleteUser(email);
+        //     if (!response.Success)
+        //         return BadRequest(response);
+
+        //     return Ok(response);
+        // }
+
+        [HttpGet("confirmEmail")]
         public async Task<IActionResult> ConfirmEmail(string email, string token)
         {
-            var result = await _service.AuthService.ConfirmEmail(email, token);
-            
-            if (result.Succeeded)
+            var result = await _service.AuthService.ValidateToken(email, token);
+
+            if (result.Success)
                 return Ok("Email Confirmed Successfully");
-                
+
             return BadRequest(result.Errors);
+        }
+        
+        [HttpGet("sendToken")]
+        public async Task<IActionResult> SendToken(string email)
+        {
+            var response = await _service.AuthService.SendToken(email);
+            if (!response.Success)
+                return BadRequest(response);
+
+            return Ok(response);
         }
 
         

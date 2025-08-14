@@ -23,18 +23,20 @@ namespace Service
         private readonly IConfiguration _configuration;
         private readonly IRepositoryManager _repository;
         private readonly IEmailService _emailService;
+        private readonly IClientService _clientService;
 
 
         private User? _user;
 
         public AuthService(IMapper mapper, UserManager<User> userManager, IConfiguration configuration,
-                                    IRepositoryManager repository, IEmailService emailService)
+                                    IRepositoryManager repository, IEmailService emailService, IClientService clientService)
         {
             _mapper = mapper;
             _userManager = userManager;
             _configuration = configuration;
             _repository = repository;
             _emailService = emailService;
+            _clientService = clientService;
         }
 
 
@@ -113,7 +115,7 @@ namespace Service
             var emailSent = await _emailService.SendConfirmationEmailAsync(user);
             if (!emailSent)
             {
-                await DeleteUnregisteredUser(user.Email);
+                await _clientService.AdminDeleteUser(user.Email);
                 return ApiResponse<LoginDto>.FailureResponse(new List<string> { "Email Not Sent, Check Your Network and Try Again Please. AdminUser Deleted" }, "Registration failed");
             }
             return ApiResponse<LoginDto>.SuccessResponse(response, "AdminUser registered successfully, Check email to confirm your account");
@@ -171,29 +173,37 @@ namespace Service
             return ApiResponse<LoginDto>.SuccessResponse(response, "User details updated successfully");
         }
 
-        public async Task<IdentityResult> UpdateUserPassword(string email, string currentPassword, string newPassword)
+        public async Task<ApiResponse<bool>> UpdateUserPassword(UpdateUserPasswordDto dto)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(dto.Email);
 
             if (user == null)
-                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+                return ApiResponse<bool>.FailureResponse(new List<string> { "User not found." });
+
 
             // Verify the current password is correct
-            var checkPasswordResult = await _userManager.CheckPasswordAsync(user, currentPassword);
+            var checkPasswordResult = await _userManager.CheckPasswordAsync(user, dto.CurrentPassword);
             if (!checkPasswordResult)
-                return IdentityResult.Failed(new IdentityError { Description = "Current password is incorrect." });
+                return ApiResponse<bool>.FailureResponse(new List<string> { "Current password is incorrect." });
 
             // Use the built-in ChangePasswordAsync method
-            return await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description).ToList();
+                return ApiResponse<bool>.FailureResponse(errors, "Password update failed");
+            }
+
+            return ApiResponse<bool>.SuccessResponse(true, "Password updated successfully");
         }
 
-        public async Task<ApiResponse<string>> RequestPasswordReset(PasswordResetDto request)
+        public async Task<ApiResponse<string>> RequestPasswordReset(RequestPasswordResetDto request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user is null)
                 return ApiResponse<string>.FailureResponse(new List<string> { "User not found." });
 
-            var emailSent = await _emailService.SendConfirmationEmailAsync(user);
+            var emailSent = await _emailService.SendResetPasswordEmailAsync(user);
             if (!emailSent)
             {
                 return ApiResponse<string>.FailureResponse(new List<string> { $"Email Not Sent, Check Your Network and Try Again Please." }, "Request failed");
@@ -208,8 +218,8 @@ namespace Service
             if (user is null)
                 return ApiResponse<bool>.FailureResponse(new List<string> { "User not found." });
 
-            var tokenEntry = _repository.EmailVerificationToken.GetToken(email, false);
-            if (tokenEntry == null || tokenEntry.Token != token)
+            var tokenEntry = await _repository.EmailVerificationToken.GetToken(email, false);
+            if (tokenEntry == null || token != tokenEntry.Token)
                 return ApiResponse<bool>.FailureResponse(new List<string> { "Invalid Token." });
 
             if (tokenEntry.ExpiryTime < DateTime.UtcNow)
@@ -218,7 +228,11 @@ namespace Service
                 return ApiResponse<bool>.FailureResponse(new List<string> { "Token has expired." });
             }
 
-            //delete token
+            user.EmailConfirmed = true;
+            tokenEntry.IsUsed = true;
+            await _userManager.UpdateAsync(user);
+
+            await _repository.EmailVerificationToken.RemoveToken(tokenEntry);
         
             return ApiResponse<bool>.SuccessResponse(true);
         }
@@ -239,70 +253,37 @@ namespace Service
             {
                 var errors = resetResult.Errors.Select(e => e.Description).ToList();
                 return ApiResponse<string>.FailureResponse(errors, "Password reset failed");
-            }
+            }                
 
             return ApiResponse<string>.SuccessResponse("Successful", "Password reset successfully");
         }
 
+        
+        // public async Task<ApiResponse<LoginDto>> DeleteUser(string email)
+        // {
+        //     var user = await _userManager.FindByEmailAsync(email);
+        //     if (user == null)
+        //         return ApiResponse<LoginDto>.FailureResponse(new List<string> { "User does not exist." });
 
-        public async Task<IdentityResult> DeleteUser(string email, string password)
+        //     var userData = _mapper.Map<LoginDto>(user);
+        //     await _userManager.DeleteAsync(user);
+        //     return ApiResponse<LoginDto>.SuccessResponse(userData, "User deleted successfully.");
+        // }
+
+        public async Task<ApiResponse<bool>> SendToken(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
-                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
+                return ApiResponse<bool>.FailureResponse(new List<string> { "User not found." });
 
-            var pass = await _userManager.CheckPasswordAsync(user, password);
-
-            if (!pass)
-                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
-
-            return await _userManager.DeleteAsync(user);
-
-        }
-        public async Task<IdentityResult> DeleteUnregisteredUser(string email)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
-                return IdentityResult.Failed(new IdentityError { Description = "Wrong Username or Password." });
-
-            return await _userManager.DeleteAsync(user);
-
-        }
-
-        public async Task<IdentityResult> ConfirmEmail(string email, string token)
-        {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user == null)
+            var emailSent = await _emailService.SendConfirmationEmailAsync(user);
+            if (!emailSent)
             {
-                throw new Exception("User not found!!");
+                return ApiResponse<bool>.FailureResponse(new List<string> { "Failed to send email." });
             }
 
-            var tokenEntry = _repository.EmailVerificationToken.GetToken(email, false);
-
-            if (tokenEntry == null)
-                throw new Exception("Token is invalid!!");
-            if (tokenEntry.Token != token)
-                throw new Exception("Token is incorrect!!");
-            if (tokenEntry.Token == token & tokenEntry.ExpiryTime < DateTime.UtcNow)
-            {
-                await _repository.EmailVerificationToken.RemoveToken(tokenEntry);
-
-                throw new Exception("Token has expired!!");
-            }
-            if (tokenEntry.Token == token)
-            {
-                // Confirm email
-                user.EmailConfirmed = true;
-                tokenEntry.IsUsed = true;
-
-                if (tokenEntry.IsUsed)
-                    await _repository.EmailVerificationToken.RemoveToken(tokenEntry);
-
-            }
-            return await _userManager.UpdateAsync(user);
-            //FIX EXPIRED TOKENS!!!
+            return ApiResponse<bool>.SuccessResponse(true, "Token sent successfully.");
         }
-
 
 
 

@@ -1,6 +1,6 @@
 namespace Shared.DataTransferObjects
 {
-    public class PasswordResetDto
+    public class RequestPasswordResetDto
     {
         public required string Email { get; set; }
 
@@ -9,6 +9,13 @@ namespace Shared.DataTransferObjects
     {
         public required string Token { get; set; }
         public required string Email { get; set; }
+        public required string NewPassword { get; set; }
+    }
+
+    public class UpdateUserPasswordDto
+    {
+        public required string Email { get; set; }
+        public required string CurrentPassword { get; set; }
         public required string NewPassword { get; set; }
     }
 
